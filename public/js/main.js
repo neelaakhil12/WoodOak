@@ -1,6 +1,45 @@
 // Wood Oak Wonders - General Frontend Scripts
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Hero Heading Typewriter Animation (no cursor)
+  function typewriterHero() {
+    const segments = [
+      { id: 'hero-type-1', text: 'Crafting Timeless' },
+      { id: 'hero-type-2', text: 'Wooden Wonders' },
+      { id: 'hero-type-3', text: 'That Last Generations' }
+    ];
+    const speed = 55; // ms per character
+
+    // Reset all spans to empty before typing
+    segments.forEach(s => {
+      const el = document.getElementById(s.id);
+      if (el) el.textContent = '';
+    });
+
+    let segIndex = 0;
+    let charIndex = 0;
+
+    function typeNext() {
+      if (segIndex >= segments.length) return;
+      const { id, text } = segments[segIndex];
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      if (charIndex < text.length) {
+        el.textContent += text.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeNext, speed);
+      } else {
+        // Move to next segment
+        segIndex++;
+        charIndex = 0;
+        setTimeout(typeNext, 120); // brief pause between segments
+      }
+    }
+
+    typeNext();
+  }
+
   // Fade out loader (for other pages)
   const loader = document.getElementById('loader-wrapper');
   if (loader) {
@@ -36,8 +75,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       splash.classList.add('fade-out');
       setTimeout(() => {
         splash.style.display = 'none';
+        // Start hero typewriter EXACTLY when the website appears
+        typewriterHero();
       }, 800);
     }, 3800); // 3.8s is perfect timing for full leaf fall & logo reveal sequence
+  } else {
+    // No splash (other pages or direct load) — start typing after short delay
+    setTimeout(typewriterHero, 300);
   }
 
   // Load and apply brand settings globally
@@ -61,47 +105,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Lucide Icons
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
-  }
-
-  // Hero Heading Typewriter Animation (no cursor)
-  function typewriterHero() {
-    const segments = [
-      { id: 'hero-type-1', text: 'Crafting Timeless' },
-      { id: 'hero-type-2', text: 'Wooden Wonders' },
-      { id: 'hero-type-3', text: 'That Last Generations' }
-    ];
-    const speed = 55; // ms per character
-
-    let segIndex = 0;
-    let charIndex = 0;
-
-    function typeNext() {
-      if (segIndex >= segments.length) return;
-      const { id, text } = segments[segIndex];
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      if (charIndex < text.length) {
-        el.textContent += text.charAt(charIndex);
-        charIndex++;
-        setTimeout(typeNext, speed);
-      } else {
-        // Move to next segment
-        segIndex++;
-        charIndex = 0;
-        setTimeout(typeNext, 120); // brief pause between segments
-      }
-    }
-
-    typeNext();
-  }
-
-  // Start hero typing after splash fades out (~4s) or immediately if no splash
-  const splashEl = document.getElementById('splash-screen');
-  if (splashEl) {
-    setTimeout(typewriterHero, 4200);
-  } else {
-    setTimeout(typewriterHero, 400);
   }
 
   // Sticky Header Logic
