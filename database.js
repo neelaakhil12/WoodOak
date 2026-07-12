@@ -55,8 +55,15 @@ class DatabaseClient {
 
   async connectSQLite() {
     console.log('Connecting to SQLite Database...');
-    const dbPath = path.join(__dirname, 'database.sqlite');
-    ensureDirExists(dbPath);
+    // On Vercel, the project root is read-only. Use /tmp which is writable.
+    const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
+    const dbPath = isVercel
+      ? '/tmp/database.sqlite'
+      : path.join(__dirname, 'database.sqlite');
+    
+    if (!isVercel) {
+      ensureDirExists(dbPath);
+    }
     
     return new Promise((resolve, reject) => {
       this.sqliteDb = new sqlite3.Database(dbPath, (err) => {

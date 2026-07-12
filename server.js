@@ -12,19 +12,33 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Setup directories
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
 const publicDir = path.join(__dirname, 'public');
-const uploadsDir = path.join(publicDir, 'uploads');
-if (!fs.existsSync(publicDir)) {
-  fs.mkdirSync(publicDir, { recursive: true });
-}
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+const uploadsDir = isVercel ? '/tmp/uploads' : path.join(publicDir, 'uploads');
+
+if (!isVercel) {
+  if (!fs.existsSync(publicDir)) {
+    fs.mkdirSync(publicDir, { recursive: true });
+  }
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} else {
+  // On Vercel, only /tmp is writable
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
 }
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(publicDir));
+
+// On Vercel, serve /tmp/uploads via /uploads path
+if (isVercel) {
+  app.use('/uploads', express.static('/tmp/uploads'));
+}
 
 // Sessions setup
 app.use(session({
