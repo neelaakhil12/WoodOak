@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get In Touch | Wood Oak Wonders</title>
+  
+  <!-- Meta Descriptions for SEO -->
+  <meta name="description" content="Contact Wood Oak Wonders for custom wood furniture designs, bar cabinet inquiries, shelves, or custom home decor projects.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#1B5E20',
+              secondary: '#2E7D32',
+              accent: '#66BB6A',
+              lightBg: '#F8FDF8',
+              border: '#DDEBDD',
+              darkText: '#1A1A1A'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- AOS Library -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body class="bg-white text-brand-darkText overflow-x-hidden pt-20 sm:pt-28">
+
+  <!-- Loader Wrapper -->
+  <div id="loader-wrapper" class="loader-wrapper">
+    <div class="flex flex-col items-center">
+      <div class="loader mb-4"></div>
+      <p class="text-brand-primary font-heading font-medium tracking-wider">WOOD OAK WONDERS</p>
+    </div>
+  </div>
+
+  <!-- Header Section (Sticky Navigation) -->
+  <header class="fixed top-0 left-0 w-full z-50 glass-header scrolled">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 sm:h-28 flex justify-between items-center transition-all duration-300">
+      <!-- Logo -->
+      <a href="/" class="flex items-center space-x-2 group max-w-[75%]">
+        <img src="/logo.png" alt="Wood Oak Wonders Logo" class="h-14 sm:h-24 w-auto object-contain transition-all duration-300 group-hover:scale-105 shrink-0">
+        <div class="min-w-0">
+          <span class="block font-heading font-extrabold text-xs xs:text-base sm:text-xl tracking-tight text-brand-primary dynamic-brand-name truncate">Wood Oak Wonders</span>
+          <span class="block text-[7px] xs:text-[8px] sm:text-[9px] text-brand-secondary tracking-widest uppercase font-semibold mt-0.5 sm:-mt-1 truncate">Craftsmanship Heirloom</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-8 font-medium text-sm">
+        <a href="/" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Home</a>
+        <a href="/services.html" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Our Services</a>
+        <a href="/story.html" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Our Story</a>
+        <a href="/gallery.html" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Gallery</a>
+        <a href="/contact.html" class="text-brand-primary font-semibold border-b-2 border-brand-primary pb-1">Contact</a>
+      </nav>
+
+      <!-- Right Desktop Elements -->
+      <div class="hidden md:flex items-center space-x-4">
+        <a href="/contact.html" class="btn-primary px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md hover:shadow-lg">
+          Inquire Now
+        </a>
+      </div>
+
+      <!-- Hamburger Button (Mobile) -->
+      <button id="menu-btn" class="md:hidden text-white hover:text-brand-accent focus:outline-none p-2 z-50">
+        <i data-lucide="menu" class="w-7 h-7"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-menu" class="hidden absolute top-20 left-0 w-full bg-white border-b border-brand-border flex-col p-6 space-y-4 shadow-lg md:hidden">
+      <a href="/" class="font-medium hover:text-brand-primary py-2 border-b border-gray-100 transition-colors">Home</a>
+      <a href="/services.html" class="font-medium hover:text-brand-primary py-2 border-b border-gray-100 transition-colors">Our Services</a>
+      <a href="/story.html" class="font-medium hover:text-brand-primary py-2 border-b border-gray-100 transition-colors">Our Story</a>
+      <a href="/gallery.html" class="font-medium hover:text-brand-primary py-2 border-b border-gray-100 transition-colors">Gallery</a>
+      <a href="/contact.html" class="font-semibold text-brand-primary py-2">Contact</a>
+      <a href="/contact.html" class="btn-primary w-full py-3 rounded-xl text-center font-semibold text-sm tracking-wide">
+        Inquire Now
+      </a>
+    </div>
+  </header>
+
+  <!-- Banner Hero -->
+  <section class="bg-brand-lightBg border-b border-brand-border py-16">
+    <div class="max-w-7xl mx-auto px-6 text-center" data-aos="fade-up">
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl text-gray-900 leading-tight">Get In Touch</h1>
+      <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto mt-4 leading-relaxed">
+        Have questions about wood selection, pricing, or custom orders? Reach out to us.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Form & Info Grid -->
+  <section class="py-24 max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      
+      <!-- Contact Info Panel (5 cols) -->
+      <div class="lg:col-span-5 space-y-10" data-aos="fade-right">
+        <div class="space-y-4">
+          <h2 class="font-heading font-extrabold text-2xl text-gray-900">Wood Oak Wonders</h2>
+          <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">
+            Visit our administrative office or workshop, or contact us directly by phone or email. We typically respond to custom inquiries within 24 hours.
+          </p>
+        </div>
+
+        <div class="space-y-6 text-xs sm:text-sm">
+          <!-- Address -->
+          <div class="flex items-start space-x-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-lightBg border border-brand-border flex items-center justify-center text-brand-primary shrink-0">
+              <i data-lucide="map-pin" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-heading font-bold text-gray-900 text-sm">Workshop Address</h4>
+              <p class="text-gray-500 mt-1 leading-relaxed dynamic-address">
+                Flat No. 4-94, Kattempudi Road, Near Sri Veda High School, Kattempudi Village, Dandamudi, Guntur District, Andhra Pradesh - 522316
+              </p>
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="flex items-start space-x-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-lightBg border border-brand-border flex items-center justify-center text-brand-primary shrink-0">
+              <i data-lucide="phone" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-heading font-bold text-gray-900 text-sm">Direct Phone</h4>
+              <p class="mt-1">
+                <a class="dynamic-phone text-brand-primary font-semibold hover:underline">+91 9848677678</a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="flex items-start space-x-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-lightBg border border-brand-border flex items-center justify-center text-brand-primary shrink-0">
+              <i data-lucide="mail" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-heading font-bold text-gray-900 text-sm">Official Email</h4>
+              <p class="mt-1">
+                <a class="dynamic-email text-brand-primary font-semibold hover:underline">info@woodoakwonders.com</a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Business Hours -->
+          <div class="flex items-start space-x-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-lightBg border border-brand-border flex items-center justify-center text-brand-primary shrink-0">
+              <i data-lucide="clock" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-heading font-bold text-gray-900 text-sm">Business Hours</h4>
+              <ul class="text-xs text-gray-500 mt-1 space-y-1 leading-relaxed">
+                <li>Monday - Saturday : 9:00 AM - 7:00 PM</li>
+                <li>Sunday : Closed</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Map Embedded Placeholder -->
+        <div class="rounded-2xl overflow-hidden border border-brand-border shadow-sm h-64 bg-brand-lightBg relative">
+          <!-- In production, replace with actual Google Maps Embed iframe. Using standard clean map placeholder styling. -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-3">
+            <i data-lucide="map" class="w-8 h-8 text-brand-primary animate-bounce"></i>
+            <span class="font-heading font-bold text-xs text-gray-900">Guntur District Workshop, Andhra Pradesh</span>
+            <p class="text-[10px] text-gray-400 max-w-xs leading-relaxed">
+              Located near Sri Veda High School, Kattempudi Village.
+            </p>
+            <a href="https://maps.google.com/?q=Kattempudi,Dandamudi,Andhra+Pradesh" target="_blank" class="text-xs text-brand-primary font-semibold hover:underline">Open in Google Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form Panel (7 cols) -->
+      <div class="lg:col-span-7" data-aos="fade-left">
+        <div class="bg-brand-lightBg p-8 sm:p-10 rounded-3xl border border-brand-border shadow-sm">
+          <h3 class="font-heading font-extrabold text-xl text-gray-900 mb-6">Send an Inquiry</h3>
+          
+          <form id="contact-form" class="space-y-6">
+            <!-- Full Name -->
+            <div class="space-y-2">
+              <label for="name" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">Full Name</label>
+              <input type="text" id="name" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none bg-white text-sm" placeholder="Enter your full name">
+            </div>
+
+            <!-- Email & Phone Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label for="email" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">Email Address</label>
+                <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none bg-white text-sm" placeholder="e.g. name@example.com">
+              </div>
+              <div class="space-y-2">
+                <label for="phone" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">Phone Number</label>
+                <input type="tel" id="phone" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none bg-white text-sm" placeholder="e.g. +91 98486 77678">
+              </div>
+            </div>
+
+            <!-- Subject -->
+            <div class="space-y-2">
+              <label for="subject" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">Subject</label>
+              <input type="text" id="subject" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none bg-white text-sm" placeholder="e.g. Custom guitar shelf dimensions">
+            </div>
+
+            <!-- Message -->
+            <div class="space-y-2">
+              <label for="message" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">Message</label>
+              <textarea id="message" rows="5" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none bg-white text-sm" placeholder="Detail your requirements, custom sizing, finishes, or questions here..."></textarea>
+            </div>
+
+            <!-- Response Alert Info -->
+            <div id="form-alert" class="hidden p-4 rounded-xl text-xs font-medium"></div>
+
+            <button type="submit" class="w-full btn-primary py-4 rounded-xl font-semibold text-xs sm:text-sm uppercase tracking-wider shadow hover:shadow-lg flex items-center justify-center space-x-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Send Inquiry Message</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer class="bg-gray-900 text-gray-400 py-16 border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <!-- Column 1: Info -->
+      <div class="space-y-4">
+        <a href="/" class="flex items-center space-x-3 text-white">
+          <img src="/logo.png" alt="Wood Oak Wonders Logo" class="h-16 sm:h-32 w-auto object-contain">
+          <span class="font-heading font-extrabold text-lg tracking-tight dynamic-brand-name">Wood Oak Wonders</span>
+        </a>
+        <p class="text-xs leading-relaxed">
+          Premium handcrafted wooden furniture, shelves, and luxury custom woodworks built to last generations with Indian heritage and global quality standards.
+        </p>
+        <div class="flex space-x-4 pt-2">
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="space-y-4">
+        <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Quick Links</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Our Services</a></li>
+          <li><a href="/story.html" class="hover:text-white transition-colors">Our Story</a></li>
+          <li><a href="/gallery.html" class="hover:text-white transition-colors">Gallery Showcase</a></li>
+          <li><a href="/contact.html" class="hover:text-white transition-colors">Contact Enquiries</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Services -->
+      <div class="space-y-4">
+        <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Services</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="/services.html" class="hover:text-white transition-colors">Custom Hardwood Furniture</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Artistic Musical Shelves</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Premium Corner Stands</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Bottle-Shaped Bar Cabinets</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Commercial Wooden Decor</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact -->
+      <div class="space-y-4 text-xs">
+        <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Contact Us</h4>
+        <p class="flex items-start space-x-2">
+          <i data-lucide="map-pin" class="w-4 h-4 text-brand-primary shrink-0 mt-0.5"></i>
+          <span class="dynamic-address">Flat No. 4-94, Kattempudi Road, Near Sri Veda High School, Dandamudi, Andhra Pradesh - 522316</span>
+        </p>
+        <p class="flex items-center space-x-2">
+          <i data-lucide="phone" class="w-4 h-4 text-brand-primary shrink-0"></i>
+          <a class="dynamic-phone hover:text-white transition-colors">+91 9848677678</a>
+        </p>
+        <p class="flex items-center space-x-2">
+          <i data-lucide="mail" class="w-4 h-4 text-brand-primary shrink-0"></i>
+          <a class="dynamic-email hover:text-white transition-colors">info@woodoakwonders.com</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-gray-800 text-center text-xs">
+      <p>© 2026 Wood Oak Wonders. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Link -->
+  <a href="#" target="_blank" class="whatsapp-link fixed bottom-6 left-6 z-40 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 whatsapp-pulse" aria-label="Chat on WhatsApp">
+    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.504-5.729-1.464L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.795 1.453 5.361 0 9.724-4.36 9.727-9.722.002-2.597-1.007-5.042-2.842-6.879C16.486 2.169 14.041 1.16 11.45 1.16 6.089 1.16 1.725 5.52 1.723 10.883c0 1.691.444 3.345 1.288 4.787L2.002 21l5.441-1.426c.001-.001.002-.001.003-.002z"/>
+    </svg>
+  </a>
+
+  <!-- Scroll To Top -->
+  <button id="scroll-top-btn" class="fixed bottom-6 right-6 z-40 bg-brand-primary text-white p-3.5 rounded-full shadow-2xl opacity-0 invisible hover:bg-brand-secondary transition-all duration-300" aria-label="Scroll to top">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+  <!-- Custom JS Modules -->
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+
+  <!-- Contact Form Submission JS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check query params to prefill subject (e.g. if arriving from service page)
+      const params = new URLSearchParams(window.location.search);
+      const serviceParam = params.get('service');
+      const subjectInput = document.getElementById('subject');
+      if (serviceParam && subjectInput) {
+        subjectInput.value = `Inquiry regarding: ${decodeURIComponent(serviceParam)}`;
+      }
+
+      const form = document.getElementById('contact-form');
+      const alertBox = document.getElementById('form-alert');
+
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          // Disable button
+          const btn = form.querySelector('button[type="submit"]');
+          btn.disabled = true;
+          btn.innerHTML = 'Submitting...';
+
+          const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            subject: subjectInput.value,
+            message: document.getElementById('message').value
+          };
+
+          try {
+            const res = await API.submitEnquiry(data);
+            if (res.success) {
+              alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700');
+              alertBox.classList.add('bg-green-50', 'text-green-700');
+              alertBox.textContent = res.message;
+              form.reset();
+            } else {
+              throw new Error(res.error || 'Failed to submit enquiry');
+            }
+          } catch (err) {
+            console.error(err);
+            alertBox.classList.remove('hidden', 'bg-green-50', 'text-green-700');
+            alertBox.classList.add('bg-red-50', 'text-red-700');
+            alertBox.textContent = err.message || 'There was an issue sending your message. Please try again.';
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Send Inquiry Message</span>`;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            
+            // Scroll to alert
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

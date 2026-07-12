@@ -1,0 +1,398 @@
+/* Core Styling for Wood Oak Wonders - Luxury & Minimal Theme */
+
+:root {
+  --primary-color: #1B5E20;
+  --primary-dark: #123e16;
+  --secondary-color: #2E7D32;
+  --accent-color: #66BB6A;
+  --bg-color: #FFFFFF;
+  --text-color: #1A1A1A;
+  --card-bg: #F8FDF8;
+  --border-color: #DDEBDD;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f8f1;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* Base resets and animations */
+html, body {
+  scroll-behavior: smooth;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
+  overflow-x: hidden !important;
+  width: 100% !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+}
+
+/* Custom selections */
+::selection {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+/* Dark Glassmorphism Navigation (Matching Footer bg-gray-900) */
+.glass-header {
+  background-color: #111827 !important; /* Constant premium solid dark header matching footer */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.4s ease;
+  border-bottom: 1px solid #1f2937;
+}
+
+.glass-header.scrolled {
+  background-color: #111827 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #1f2937;
+}
+
+/* Header Text & Links Color Overrides for Dark Background */
+.glass-header nav a {
+  color: #9ca3af !important; /* text-gray-400 */
+  transition: color 0.3s ease;
+}
+
+.glass-header nav a:hover {
+  color: #ffffff !important; /* text-white */
+}
+
+/* Active links state */
+.glass-header nav a.text-brand-primary {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+/* Brand name text */
+.glass-header .dynamic-brand-name {
+  color: #ffffff !important;
+}
+
+.glass-header span.text-brand-secondary {
+  color: #9ca3af !important;
+}
+
+/* Hamburger button icon */
+.glass-header #menu-btn {
+  color: #ffffff !important;
+}
+
+/* Mobile menu container in dark header */
+.glass-header #mobile-menu {
+  background-color: #111827 !important;
+  border-bottom: 1px solid #1f2937 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+}
+
+.glass-header #mobile-menu a {
+  color: #9ca3af !important;
+  border-color: #1f2937 !important;
+}
+
+.glass-header #mobile-menu a:hover {
+  color: #ffffff !important;
+}
+
+.glass-header #mobile-menu a.text-brand-primary {
+  color: #ffffff !important;
+}
+
+/* Premium Card & Hover effects */
+.luxury-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(27, 94, 32, 0.08);
+  border-color: var(--accent-color);
+}
+
+.luxury-card img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Premium Buttons */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: -1;
+  background-color: var(--primary-dark);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.3s ease-out;
+}
+
+.btn-primary:hover::after {
+  transform: scaleX(1);
+}
+
+.btn-secondary {
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+/* Micro-animations */
+.hover-underline {
+  position: relative;
+}
+
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--primary-color);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+.hover-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Timeline Layout */
+.timeline-item {
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 30px;
+  bottom: -20px;
+  width: 2px;
+  background-color: var(--border-color);
+}
+
+.timeline-item:last-child::before {
+  display: none;
+}
+
+/* Floating WhatsApp Pulsing */
+@keyframes pulse-whatsapp {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+.whatsapp-pulse {
+  animation: pulse-whatsapp 2s infinite;
+}
+
+/* Loader Screen */
+.loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loader-wrapper.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader {
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Image overlay on hero - Removed */
+.hero-overlay {
+  background: none !important;
+}
+
+/* Hero Typography: Gold & Green in Thick/Heavy font weights */
+.hero-heading {
+  font-weight: 900 !important; /* Thick font weight */
+  line-height: 1.15 !important;
+}
+
+.hero-heading .text-gold {
+  color: #F39C12 !important; /* Luxury thick gold */
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+.hero-heading .text-green {
+  color: #2ECC71 !important; /* Premium thick green */
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+.hero-subdescription {
+  color: #f3f4f6 !important; /* Light text-gray-100 */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+}
+
+.hero-slide ~ div > span {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  background-color: rgba(17, 24, 39, 0.7) !important; /* darkened badge bg */
+}
+
+/* Hero Slideshow Transitions */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 1.5s ease-in-out;
+  z-index: 0;
+}
+.hero-slide.opacity-0 {
+  opacity: 0;
+  pointer-events: none;
+}
+.hero-slide.active {
+  opacity: 1;
+}
+
+/* Premium Leaf Fall Splash Screen Styles */
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  background-color: #111827; /* Dark elegant theme background */
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.falling-leaf {
+  position: absolute;
+  top: -100px;
+  opacity: 0;
+  width: 45px;
+  height: 45px;
+  color: #2ECC71; /* Leaf green color */
+  transform-origin: center;
+  animation: leafFallAnimation 2.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes leafFallAnimation {
+  0% {
+    top: -50px;
+    left: 45%;
+    transform: rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  45% {
+    left: 55%;
+    transform: rotate(60deg) scale(1.5);
+  }
+  75% {
+    left: 42%;
+    transform: rotate(-45deg) scale(3);
+    opacity: 0.9;
+  }
+  100% {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(90deg) scale(6);
+    opacity: 0; /* Leaf dissolves at full scale to reveal the logo! */
+  }
+}
+
+.revealed-logo {
+  opacity: 0;
+  transform: scale(0.85);
+  filter: drop-shadow(0 0 25px rgba(243, 156, 18, 0.45)); /* Rich gold glow */
+  animation: logoRevealAnimation 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 2.0s forwards;
+}
+
+@keyframes logoRevealAnimation {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+#splash-screen.fade-out {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* Responsive Section Paddings - Reduces white spaces between sections on mobile */
+@media (max-width: 639px) {
+  section.py-24 {
+    padding-top: 3rem !important; /* Reduces padding-top to 48px */
+    padding-bottom: 3rem !important; /* Reduces padding-bottom to 48px */
+  }
+}

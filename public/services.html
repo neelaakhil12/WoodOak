@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Services & Masterpiece Highlights | Wood Oak Wonders</title>
+  
+  <!-- Meta Descriptions for SEO -->
+  <meta name="description" content="Explore the artisan services of Wood Oak Wonders. We specialize in custom wooden furniture, artistic wall shelves, luxury corner stands, and bar cabinets.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#1B5E20',
+              secondary: '#2E7D32',
+              accent: '#66BB6A',
+              lightBg: '#F8FDF8',
+              border: '#DDEBDD',
+              darkText: '#1A1A1A'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- AOS Library -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body class="bg-white text-brand-darkText overflow-x-hidden pt-20 sm:pt-28">
+
+  <!-- Loader Wrapper -->
+  <div id="loader-wrapper" class="loader-wrapper">
+    <div class="flex flex-col items-center">
+      <div class="loader mb-4"></div>
+      <p class="text-brand-primary font-heading font-medium tracking-wider">WOOD OAK WONDERS</p>
+    </div>
+  </div>
+
+  <!-- Header Section (Sticky Navigation) -->
+  <header class="fixed top-0 left-0 w-full z-50 glass-header scrolled">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 sm:h-28 flex justify-between items-center transition-all duration-300">
+      <!-- Logo -->
+      <a href="/" class="flex items-center space-x-2 group max-w-[75%]">
+        <img src="/logo.png" alt="Wood Oak Wonders Logo" class="h-14 sm:h-24 w-auto object-contain transition-all duration-300 group-hover:scale-105 shrink-0">
+        <div class="min-w-0">
+          <span class="block font-heading font-extrabold text-xs xs:text-base sm:text-xl tracking-tight text-brand-primary dynamic-brand-name truncate">Wood Oak Wonders</span>
+          <span class="block text-[7px] xs:text-[8px] sm:text-[9px] text-brand-secondary tracking-widest uppercase font-semibold mt-0.5 sm:-mt-1 truncate">Craftsmanship Heirloom</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-8 font-medium text-sm">
+        <a href="/" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Home</a>
+        <a href="/services.html" class="text-brand-primary font-semibold border-b-2 border-brand-primary pb-1">Our Services</a>
+        <a href="/story.html" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Our Story</a>
+        <a href="/gallery.html" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Gallery</a>
+        <a href="/contact.html" class="hover:text-brand-primary pb-1 hover-underline transition-colors">Contact</a>
+      </nav>
+
+      <!-- Right Desktop Elements -->
+      <div class="hidden md:flex items-center space-x-4">
+        <a href="/contact.html" class="btn-primary px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md hover:shadow-lg">
+          Inquire Now
+        </a>
+      </div>
+
+      <!-- Hamburger Button (Mobile) -->
+      <button id="menu-btn" class="md:hidden text-white hover:text-brand-accent focus:outline-none p-2 z-50">
+        <i data-lucide="menu" class="w-7 h-7"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-menu" class="hidden absolute top-20 left-0 w-full bg-white border-b border-brand-border flex-col p-6 space-y-4 shadow-lg md:hidden">
+      <a href="/" class="font-medium hover:text-brand-primary py-2 border-b border-gray-100 transition-colors">Home</a>
+      <a href="/services.html" class="font-semibold text-brand-primary py-2 border-b border-gray-100">Our Services</a>
+      <a href="/story.html" class="font-medium hover:text-brand-primary py-2 border-b border-gray-100 transition-colors">Our Story</a>
+      <a href="/gallery.html" class="font-medium hover:text-brand-primary py-2 border-b border-gray-100 transition-colors">Gallery</a>
+      <a href="/contact.html" class="font-medium hover:text-brand-primary py-2 transition-colors">Contact</a>
+      <a href="/contact.html" class="btn-primary w-full py-3 rounded-xl text-center font-semibold text-sm tracking-wide">
+        Inquire Now
+      </a>
+    </div>
+  </header>
+
+  <!-- Banner Hero -->
+  <section class="bg-brand-lightBg border-b border-brand-border py-16">
+    <div class="max-w-7xl mx-auto px-6 text-center" data-aos="fade-up">
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl text-gray-900 leading-tight">Our Services</h1>
+      <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto mt-4 leading-relaxed">
+        We create handcrafted wooden furniture and artistic home décor that combines functionality with timeless beauty. From design to delivery, quality is our absolute priority.
+      </p>
+    </div>
+  </section>
+
+  <!-- Dynamic Services Grid -->
+  <section class="py-24 max-w-7xl mx-auto px-6">
+    <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Loaded dynamically via API -->
+      <div class="col-span-full text-center py-8">
+        <p class="text-gray-400">Loading dynamic services...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Highlights Heading -->
+  <section class="bg-brand-lightBg border-y border-brand-border py-12">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <span class="text-xs font-semibold text-brand-primary uppercase tracking-widest bg-white border border-brand-border px-4 py-1.5 rounded-full shadow-sm">Bespoke Design Showcase</span>
+      <h2 class="font-heading font-extrabold text-3xl text-gray-900 mt-4">Product Highlights</h2>
+      <p class="text-gray-500 text-xs sm:text-sm mt-2 max-w-xl mx-auto">Take a closer look at our signature handcrafted creations loved by collectors.</p>
+    </div>
+  </section>
+
+  <!-- Product Highlight 1: Guitar Shelf -->
+  <section class="py-24 max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Image Grid/Slider -->
+      <div class="space-y-4" data-aos="fade-right">
+        <div class="rounded-2xl overflow-hidden bg-brand-lightBg border border-brand-border shadow-sm flex items-center justify-center p-4">
+          <img src="/guitar_shelf.png" alt="Guitar inspired shelf detail" class="max-h-[500px] w-auto object-contain">
+        </div>
+      </div>
+
+      <!-- Feature specs -->
+      <div class="space-y-6" data-aos="fade-up">
+        <span class="text-xs font-bold text-brand-primary uppercase tracking-widest bg-brand-lightBg px-3 py-1 rounded-full border border-brand-border">Signature Collection</span>
+        <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-gray-900">Guitar Inspired Wooden Shelf</h3>
+        <p class="text-gray-600 leading-relaxed text-sm sm:text-base">
+          Masterfully crafted from premium hardwood, this guitar-inspired shelf is a functional work of art. Ideal for showcasing books, décor, or keepsakes with a touch of vintage musical elegance.
+        </p>
+
+        <!-- Feature Bullets -->
+        <ul class="grid grid-cols-1 gap-3 text-xs sm:text-sm text-gray-700 font-medium">
+          <li class="flex items-center space-x-2.5">
+            <span>🎸 Unique guitar-inspired artistic design</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <span>🌳 Handcrafted from premium solid wood</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <span>📚 Multiple shelves for books and decorative items</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <span>✨ Smooth, durable, and elegant natural wood finish</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <span>💪 Strong, stable construction built to last</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <span>🏡 Perfect for living rooms, libraries, offices, music studios, and cafés</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <span>🌿 Eco-friendly craftsmanship with timeless appeal</span>
+          </li>
+        </ul>
+
+        <div class="pt-6">
+          <a href="#" class="whatsapp-link btn-primary px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md hover:shadow-lg inline-flex items-center space-x-2">
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+            <span>Inquire Price & Custom Size</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Highlight 2: S-Shaped Stand -->
+  <section class="py-24 bg-brand-lightBg border-y border-brand-border">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <!-- Text specs (First on Desktop) -->
+        <div class="space-y-6 lg:order-1" data-aos="fade-up">
+          <span class="text-xs font-bold text-brand-primary uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-brand-border">Modern Sculptural</span>
+          <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-gray-900">Premium S-Shaped Corner Stand</h3>
+          <p class="text-gray-600 leading-relaxed text-sm sm:text-base">
+            Crafted from premium hardwood with a deep glossy walnut finish, this S-curved corner stand offers two functional tiers in one sculptural form. Compact, sturdy, and endlessly versatile — a refined accent piece for living rooms, bedrooms, or entryway corners.
+          </p>
+
+          <!-- Feature Bullets -->
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-gray-600 font-medium">
+            <li class="flex items-center space-x-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+              <span>Premium pine wood selection</span>
+            </li>
+            <li class="flex items-center space-x-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+              <span>Luxury glossy dark finish</span>
+            </li>
+            <li class="flex items-center space-x-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+              <span>Strong & stable structure</span>
+            </li>
+            <li class="flex items-center space-x-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+              <span>Showcases natural wood grain</span>
+            </li>
+            <li class="flex items-center space-x-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+              <span>Eco-friendly organic polish</span>
+            </li>
+            <li class="flex items-center space-x-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+              <span>Modern sculptural curves</span>
+            </li>
+            <li class="flex items-center space-x-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+              <span>Plant stand & side table use</span>
+            </li>
+          </ul>
+
+          <div class="pt-6">
+            <a href="#" class="whatsapp-link btn-primary px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md hover:shadow-lg inline-flex items-center space-x-2">
+              <i data-lucide="message-square" class="w-4 h-4"></i>
+              <span>Inquire Price & Custom Size</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Image Grid/Slider (Second on Desktop) -->
+        <div class="space-y-4 lg:order-2" data-aos="fade-left">
+          <div class="rounded-2xl overflow-hidden bg-white border border-brand-border shadow-sm flex items-center justify-center p-4">
+            <img src="/s_shaped_stand_features.png" alt="S-shaped wooden stand" class="max-h-[500px] w-auto object-contain">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Highlight 2.5: S-Shaped Stand Showcase -->
+  <section class="py-24 max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Image Showcase (First on Desktop) -->
+      <div class="space-y-4" data-aos="fade-right">
+        <div class="rounded-2xl overflow-hidden bg-brand-lightBg border border-brand-border shadow-sm flex items-center justify-center p-4">
+          <img src="/s_shaped_stand.png" alt="Premium S-Shaped Corner Stand Showcase" class="max-h-[500px] w-auto object-contain">
+        </div>
+      </div>
+
+      <!-- Feature specs (Second on Desktop) -->
+      <div class="space-y-6" data-aos="fade-up">
+        <span class="text-xs font-bold text-brand-primary uppercase tracking-widest bg-brand-lightBg px-3 py-1 rounded-full border border-brand-border">Artisan Masterpiece</span>
+        <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-gray-900">Premium S-Shaped Corner Stand</h3>
+        <p class="text-gray-600 leading-relaxed text-sm sm:text-base">
+          Crafted from premium hardwood with a deep glossy walnut finish, this S-curved corner stand offers two functional tiers in one sculptural form. Compact, sturdy, and endlessly versatile — a refined accent piece for living rooms, bedrooms, or entryway corners.
+        </p>
+
+        <!-- Feature Bullets -->
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-gray-600 font-medium">
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Solid premium wood grain structure</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Double tier display utility</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Polished and finished by hand</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Enhances corners and tight spaces</span>
+          </li>
+        </ul>
+
+        <div class="pt-6">
+          <a href="#" class="whatsapp-link btn-primary px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md hover:shadow-lg inline-flex items-center space-x-2">
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+            <span>Inquire Price & Custom Size</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Highlight 3: Bar Cabinet -->
+  <section class="py-24 max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Image Grid/Slider -->
+      <div class="space-y-4" data-aos="fade-right">
+        <div class="rounded-2xl overflow-hidden bg-brand-lightBg border border-brand-border shadow-sm flex items-center justify-center p-4">
+          <img src="/bar_cabinet.png" alt="Bottle-shaped bar cabinet" class="max-h-[500px] w-auto object-contain">
+        </div>
+      </div>
+
+      <!-- Feature specs -->
+      <div class="space-y-6" data-aos="fade-up">
+        <span class="text-xs font-bold text-brand-primary uppercase tracking-widest bg-brand-lightBg px-3 py-1 rounded-full border border-brand-border">Luxury Hospitality</span>
+        <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-gray-900">Bottle Shaped Wooden Bar Cabinet</h3>
+        <p class="text-gray-600 leading-relaxed text-sm sm:text-base">
+          Luxury handcrafted wooden bottle cabinet featuring multiple storage compartments with premium polish and elegant craftsmanship. A perfect conversational masterpiece for fine dining rooms, high-end lounges, and corporate bars.
+        </p>
+
+        <!-- Feature Bullets -->
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-gray-600 font-medium">
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Bottle inspired silhouette</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Premium hardwood carvings</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Luxury dark mahogany polish</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Multiple bottle holders</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Durable solid timber build</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Perfect for lounges & hotels</span>
+          </li>
+          <li class="flex items-center space-x-2.5">
+            <i data-lucide="check" class="w-4 h-4 text-brand-primary shrink-0"></i>
+            <span>Eco-friendly organic wax coating</span>
+          </li>
+        </ul>
+
+        <div class="pt-6">
+          <a href="#" class="whatsapp-link btn-primary px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md hover:shadow-lg inline-flex items-center space-x-2">
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+            <span>Inquire Price & Custom Size</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 bg-brand-primary text-white text-center">
+    <div class="max-w-4xl mx-auto px-6 space-y-6">
+      <h2 class="font-heading font-extrabold text-3xl sm:text-4xl">Have a Custom Project in Mind?</h2>
+      <p class="text-gray-200 text-xs sm:text-sm font-light leading-relaxed max-w-xl mx-auto">
+        Our master carpenters can craft custom furniture from dimensions and layouts provided by you. Let's create an heirloom together.
+      </p>
+      <div class="pt-4">
+        <a href="/contact.html" class="inline-block bg-white text-brand-primary hover:bg-brand-accent hover:text-white px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md transition-colors">
+          Discuss Custom Design
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer class="bg-gray-900 text-gray-400 py-16 border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <!-- Column 1: Info -->
+      <div class="space-y-4">
+        <a href="/" class="flex items-center space-x-3 text-white">
+          <img src="/logo.png" alt="Wood Oak Wonders Logo" class="h-16 sm:h-32 w-auto object-contain">
+          <span class="font-heading font-extrabold text-lg tracking-tight dynamic-brand-name">Wood Oak Wonders</span>
+        </a>
+        <p class="text-xs leading-relaxed">
+          Premium handcrafted wooden furniture, shelves, and luxury custom woodworks built to last generations with Indian heritage and global quality standards.
+        </p>
+        <div class="flex space-x-4 pt-2">
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="space-y-4">
+        <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Quick Links</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Our Services</a></li>
+          <li><a href="/story.html" class="hover:text-white transition-colors">Our Story</a></li>
+          <li><a href="/gallery.html" class="hover:text-white transition-colors">Gallery Showcase</a></li>
+          <li><a href="/contact.html" class="hover:text-white transition-colors">Contact Enquiries</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Services -->
+      <div class="space-y-4">
+        <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Services</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="/services.html" class="hover:text-white transition-colors">Custom Hardwood Furniture</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Artistic Musical Shelves</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Premium Corner Stands</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Bottle-Shaped Bar Cabinets</a></li>
+          <li><a href="/services.html" class="hover:text-white transition-colors">Commercial Wooden Decor</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact -->
+      <div class="space-y-4 text-xs">
+        <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Contact Us</h4>
+        <p class="flex items-start space-x-2">
+          <i data-lucide="map-pin" class="w-4 h-4 text-brand-primary shrink-0 mt-0.5"></i>
+          <span class="dynamic-address">Flat No. 4-94, Kattempudi Road, Near Sri Veda High School, Dandamudi, Andhra Pradesh - 522316</span>
+        </p>
+        <p class="flex items-center space-x-2">
+          <i data-lucide="phone" class="w-4 h-4 text-brand-primary shrink-0"></i>
+          <a class="dynamic-phone hover:text-white transition-colors">+91 9848677678</a>
+        </p>
+        <p class="flex items-center space-x-2">
+          <i data-lucide="mail" class="w-4 h-4 text-brand-primary shrink-0"></i>
+          <a class="dynamic-email hover:text-white transition-colors">info@woodoakwonders.com</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-gray-800 text-center text-xs">
+      <p>© 2026 Wood Oak Wonders. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Link -->
+  <a href="#" target="_blank" class="whatsapp-link fixed bottom-6 left-6 z-40 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 whatsapp-pulse" aria-label="Chat on WhatsApp">
+    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.504-5.729-1.464L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.795 1.453 5.361 0 9.724-4.36 9.727-9.722.002-2.597-1.007-5.042-2.842-6.879C16.486 2.169 14.041 1.16 11.45 1.16 6.089 1.16 1.725 5.52 1.723 10.883c0 1.691.444 3.345 1.288 4.787L2.002 21l5.441-1.426c.001-.001.002-.001.003-.002z"/>
+    </svg>
+  </a>
+
+  <!-- Scroll To Top -->
+  <button id="scroll-top-btn" class="fixed bottom-6 right-6 z-40 bg-brand-primary text-white p-3.5 rounded-full shadow-2xl opacity-0 invisible hover:bg-brand-secondary transition-all duration-300" aria-label="Scroll to top">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+  <!-- Custom JS Modules -->
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+
+  <!-- Dynamic Loading Services Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const servicesGrid = document.getElementById('services-grid');
+      try {
+        const services = await API.getServices();
+        if (services && services.length > 0) {
+          servicesGrid.innerHTML = '';
+          
+          // Map of icon names to dynamic lucide representations if they match
+          const iconMap = {
+            'Hammer': 'hammer',
+            'Palette': 'palette',
+            'Layers': 'layers',
+            'Grid': 'grid',
+            'Wine': 'wine',
+            'Briefcase': 'briefcase'
+          };
+
+          services.forEach((s, idx) => {
+            const delay = idx * 100;
+            const lucideIcon = iconMap[s.icon] || 'wrench';
+
+            const cardHtml = `
+              <div class="luxury-card p-8 rounded-2xl flex flex-col justify-between" data-aos="zoom-in" data-aos-delay="${delay}">
+                <div>
+                  <div class="w-12 h-12 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary mb-6">
+                    <i data-lucide="${lucideIcon}" class="w-6 h-6"></i>
+                  </div>
+                  <h3 class="font-heading font-extrabold text-lg text-gray-900 mb-3">${s.title}</h3>
+                  <p class="text-gray-500 text-xs leading-relaxed">${s.description}</p>
+                </div>
+                <div class="pt-6 mt-6 border-t border-brand-border">
+                  <a href="/contact.html?service=${encodeURIComponent(s.title)}" class="inline-flex items-center space-x-1 text-xs font-bold text-brand-primary hover:text-brand-secondary">
+                    <span>Discuss Requirements</span>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                  </a>
+                </div>
+              </div>
+            `;
+            servicesGrid.insertAdjacentHTML('beforeend', cardHtml);
+          });
+          // Re-render icons
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        } else {
+          servicesGrid.innerHTML = `<p class="col-span-full text-center text-gray-400 py-6">No services configured yet.</p>`;
+        }
+      } catch (err) {
+        console.error('Error fetching services:', err);
+        servicesGrid.innerHTML = `<p class="col-span-full text-center text-red-400 py-6">Failed to load woodcraft services.</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

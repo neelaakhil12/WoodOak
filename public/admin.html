@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Wood Oak Wonders</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#1B5E20',
+              secondary: '#2E7D32',
+              accent: '#66BB6A',
+              lightBg: '#F8FDF8',
+              border: '#DDEBDD',
+              darkText: '#1A1A1A'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body class="bg-gray-50 text-brand-darkText font-sans overflow-x-hidden">
+
+  <!-- Login Overlay (Shown when unauthorized) -->
+  <div id="login-overlay" class="fixed inset-0 z-50 bg-[#123e16] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-multiply" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80');"></div>
+    
+    <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-brand-border max-w-md w-full relative z-10 space-y-6">
+      <div class="text-center">
+        <div class="w-14 h-14 bg-brand-lightBg rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
+          <i data-lucide="lock" class="w-7 h-7"></i>
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl text-gray-900">Admin Login</h2>
+        <p class="text-xs text-gray-400 mt-1">Wood Oak Wonders management console</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div class="space-y-1.5">
+          <label for="login-username" class="block text-xs font-semibold text-gray-700">Username</label>
+          <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="e.g. admin">
+        </div>
+        <div class="space-y-1.5">
+          <label for="login-password" class="block text-xs font-semibold text-gray-700">Password</label>
+          <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="••••••••">
+        </div>
+        <div id="login-error" class="hidden text-xs text-red-600 bg-red-50 p-3 rounded-lg font-medium"></div>
+
+        <button type="submit" class="w-full btn-primary py-3.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+          Access Console
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Layout (Grid) -->
+  <div id="admin-layout" class="hidden min-h-screen flex flex-col md:flex-row">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-gray-900 text-gray-400 shrink-0 flex flex-col justify-between border-r border-gray-800">
+      <div>
+        <!-- Brand logo -->
+        <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-white">
+            <img src="/logo.png" alt="WOW Logo" class="h-6 w-auto object-contain shrink-0">
+            <span class="font-heading font-extrabold text-base tracking-tight">WOW Console</span>
+          </div>
+          <span class="text-[9px] bg-brand-primary text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">v1.0</span>
+        </div>
+
+        <!-- Links -->
+        <nav class="p-4 space-y-1 text-sm font-medium">
+          <button data-section="dashboard" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors active text-white bg-brand-primary">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Dashboard</span>
+          </button>
+          <button data-section="products" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            <span>Products</span>
+          </button>
+          <button data-section="categories" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="tag" class="w-4 h-4"></i>
+            <span>Categories</span>
+          </button>
+          <button data-section="gallery" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="image" class="w-4 h-4"></i>
+            <span>Gallery</span>
+          </button>
+          <button data-section="services" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="wrench" class="w-4 h-4"></i>
+            <span>Services</span>
+          </button>
+          <button data-section="testimonials" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="message-square-quote" class="w-4 h-4"></i>
+            <span>Testimonials</span>
+          </button>
+          <button data-section="settings" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            <span>Page Settings</span>
+          </button>
+          <button data-section="inquiries" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="inbox" class="w-4 h-4"></i>
+            <span>Inquiries</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Logout bottom -->
+      <div class="p-4 border-t border-gray-800">
+        <button id="logout-btn" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-950 hover:text-red-400 transition-colors text-gray-500">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 min-w-0 flex flex-col">
+      <!-- Navbar top -->
+      <header class="bg-white border-b border-gray-200 h-16 shrink-0 flex items-center justify-between px-6">
+        <h2 id="section-title" class="font-heading font-extrabold text-lg text-gray-900">Dashboard</h2>
+        <div class="flex items-center space-x-3 text-xs font-semibold">
+          <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+          <span id="user-status" class="text-gray-500">Logged in as admin</span>
+        </div>
+      </header>
+
+      <!-- Dynamic Sections Container -->
+      <div id="sections-container" class="flex-1 p-6 overflow-y-auto">
+        
+        <!-- SECTION: DASHBOARD -->
+        <section id="section-dashboard" class="admin-section space-y-8">
+          <!-- Stats Widgets -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+              <div>
+                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Products</span>
+                <span id="stat-products" class="block font-heading font-extrabold text-3xl mt-1">0</span>
+              </div>
+              <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+              <div>
+                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Inquiries</span>
+                <span id="stat-inquiries" class="block font-heading font-extrabold text-3xl mt-1 text-amber-600">0</span>
+              </div>
+              <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="inbox" class="w-6 h-6"></i></div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+              <div>
+                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Gallery Showcase</span>
+                <span id="stat-gallery" class="block font-heading font-extrabold text-3xl mt-1">0</span>
+              </div>
+              <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="image" class="w-6 h-6"></i></div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+              <div>
+                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Testimonials</span>
+                <span id="stat-testimonials" class="block font-heading font-extrabold text-3xl mt-1">0</span>
+              </div>
+              <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center"><i data-lucide="message-square-quote" class="w-6 h-6"></i></div>
+            </div>
+          </div>
+
+          <!-- Recent Inquiries widget -->
+          <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+            <h3 class="font-heading font-bold text-gray-900 text-sm">Recent Customer Enquiries</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="border-b border-gray-100 text-gray-400 font-semibold uppercase tracking-wider">
+                    <th class="py-3 pr-4">Date</th>
+                    <th class="py-3 px-4">Name</th>
+                    <th class="py-3 px-4">Email / Phone</th>
+                    <th class="py-3 px-4">Subject</th>
+                    <th class="py-3 px-4">Message</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-inquiries-table">
+                  <!-- dynamically loaded -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION: PRODUCTS -->
+        <section id="section-products" class="admin-section hidden space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <!-- Search & Filters -->
+            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <input type="text" id="product-search" class="px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none w-48 bg-white" placeholder="Search products...">
+              <select id="product-filter-category" class="px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none bg-white">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+            <button onclick="openProductForm()" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 shrink-0">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add Product</span>
+            </button>
+          </div>
+
+          <!-- Products Table -->
+          <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-3.5 px-6">Image</th>
+                  <th class="py-3.5 px-4">Name</th>
+                  <th class="py-3.5 px-4">Category</th>
+                  <th class="py-3.5 px-4">Price</th>
+                  <th class="py-3.5 px-4 text-center">Featured</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+            <!-- Pagination Footer -->
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between text-xs text-gray-500">
+              <span id="product-pagination-info">Showing 0 products</span>
+              <div class="flex items-center space-x-2">
+                <button id="product-prev-page" class="px-3 py-1.5 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 disabled:opacity-50">Prev</button>
+                <button id="product-next-page" class="px-3 py-1.5 border border-gray-200 bg-white rounded-lg hover:bg-gray-50 disabled:opacity-50">Next</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION: CATEGORIES -->
+        <section id="section-categories" class="admin-section hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Table -->
+          <div class="lg:col-span-8 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-3.5 px-6">ID</th>
+                  <th class="py-3.5 px-4">Category Name</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="categories-table-body">
+                <!-- Dynamic -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Form Add -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+            <h3 class="font-heading font-bold text-gray-900 text-sm">Add Category</h3>
+            <form id="category-form" class="space-y-4">
+              <div class="space-y-1.5">
+                <label for="category-name" class="block text-xs font-semibold text-gray-700">Category Name</label>
+                <input type="text" id="category-name" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. Wall Decor">
+              </div>
+              <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+                Save Category
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION: GALLERY -->
+        <section id="section-gallery" class="admin-section hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Table -->
+          <div class="lg:col-span-8 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-3.5 px-6">Preview</th>
+                  <th class="py-3.5 px-4">Title</th>
+                  <th class="py-3.5 px-4">Category</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="gallery-table-body">
+                <!-- Dynamic -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Form Add -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+            <h3 class="font-heading font-bold text-gray-900 text-sm">Add Gallery Item</h3>
+            <form id="gallery-form" class="space-y-4">
+              <div class="space-y-1.5">
+                <label for="gallery-title" class="block text-xs font-semibold text-gray-700">Title</label>
+                <input type="text" id="gallery-title" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. Custom Stand close-up">
+              </div>
+              <div class="space-y-1.5">
+                <label for="gallery-category" class="block text-xs font-semibold text-gray-700">Category Tag</label>
+                <select id="gallery-category" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  <option value="Shelves">Shelves</option>
+                  <option value="Corner Stands">Corner Stands</option>
+                  <option value="Bar Cabinets">Bar Cabinets</option>
+                  <option value="Custom Furniture">Custom Furniture</option>
+                </select>
+              </div>
+              
+              <!-- Direct URL or upload -->
+              <div class="space-y-2 border-t border-gray-100 pt-4">
+                <label class="block text-xs font-semibold text-gray-700">Image Source</label>
+                <div class="flex gap-2">
+                  <button type="button" onclick="switchGalleryImgSrc('url')" id="gallery-src-url-btn" class="flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold">Direct URL</button>
+                  <button type="button" onclick="switchGalleryImgSrc('file')" id="gallery-src-file-btn" class="flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold">Local File</button>
+                </div>
+                
+                <!-- URL Input -->
+                <div id="gallery-img-url-box" class="space-y-1">
+                  <input type="url" id="gallery-img-url" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="https://unsplash.com/...">
+                </div>
+                <!-- File Input -->
+                <div id="gallery-img-file-box" class="hidden space-y-1">
+                  <input type="file" id="gallery-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20">
+                </div>
+              </div>
+
+              <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+                Save Image Item
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION: SERVICES -->
+        <section id="section-services" class="admin-section hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Table -->
+          <div class="lg:col-span-8 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-3.5 px-6">Icon</th>
+                  <th class="py-3.5 px-4">Title</th>
+                  <th class="py-3.5 px-4">Description</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="services-table-body">
+                <!-- Dynamic -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Form Add -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+            <h3 class="font-heading font-bold text-gray-900 text-sm">Add Service Card</h3>
+            <form id="services-form" class="space-y-4">
+              <div class="space-y-1.5">
+                <label for="service-title" class="block text-xs font-semibold text-gray-700">Title</label>
+                <input type="text" id="service-title" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. Custom Dining Sets">
+              </div>
+              <div class="space-y-1.5">
+                <label for="service-description" class="block text-xs font-semibold text-gray-700">Description</label>
+                <textarea id="service-description" required rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="Briefly describe what this service offer..."></textarea>
+              </div>
+              <div class="space-y-1.5">
+                <label for="service-icon" class="block text-xs font-semibold text-gray-700">Icon Tag</label>
+                <select id="service-icon" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  <option value="Hammer">Hammer</option>
+                  <option value="Palette">Palette</option>
+                  <option value="Layers">Layers</option>
+                  <option value="Grid">Grid</option>
+                  <option value="Wine">Wine</option>
+                  <option value="Briefcase">Briefcase</option>
+                </select>
+              </div>
+              <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+                Save Service
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION: TESTIMONIALS -->
+        <section id="section-testimonials" class="admin-section hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Table -->
+          <div class="lg:col-span-8 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-3.5 px-6">Author</th>
+                  <th class="py-3.5 px-4">Role</th>
+                  <th class="py-3.5 px-4">Review</th>
+                  <th class="py-3.5 px-4 text-center">Rating</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="testimonials-table-body">
+                <!-- Dynamic -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Form Add -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+            <h3 class="font-heading font-bold text-gray-900 text-sm">Add Testimonial</h3>
+            <form id="testimonial-form" class="space-y-4">
+              <div class="space-y-1.5">
+                <label for="testi-name" class="block text-xs font-semibold text-gray-700">Client Name</label>
+                <input type="text" id="testi-name" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. Priya Reddy">
+              </div>
+              <div class="space-y-1.5">
+                <label for="testi-role" class="block text-xs font-semibold text-gray-700">Role / Location</label>
+                <input type="text" id="testi-role" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. Homeowner, Guntur">
+              </div>
+              <div class="space-y-1.5">
+                <label for="testi-review" class="block text-xs font-semibold text-gray-700">Review</label>
+                <textarea id="testi-review" required rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="Excellent craftsmanship..."></textarea>
+              </div>
+              <div class="space-y-1.5">
+                <label for="testi-rating" class="block text-xs font-semibold text-gray-700">Rating (1 to 5 Stars)</label>
+                <select id="testi-rating" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  <option value="5">5 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="3">3 Stars</option>
+                </select>
+              </div>
+              <div class="space-y-1.5">
+                <label for="testi-avatar" class="block text-xs font-semibold text-gray-700">Avatar Image URL (Optional)</label>
+                <input type="url" id="testi-avatar" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="https://unsplash.com/...">
+              </div>
+              <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+                Save Review
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION: PAGE SETTINGS -->
+        <section id="section-settings" class="admin-section hidden space-y-6">
+          <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+            <form id="settings-form" class="space-y-8">
+              
+              <!-- Company configurations -->
+              <div class="space-y-4">
+                <h3 class="font-heading font-extrabold text-sm text-gray-900 border-b border-gray-100 pb-2">Branding & Hero Copy</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">Brand Name</label>
+                    <input type="text" id="set-brand-name" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">Brand Tagline</label>
+                    <input type="text" id="set-brand-tagline" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Information -->
+              <div class="space-y-4">
+                <h3 class="font-heading font-extrabold text-sm text-gray-900 border-b border-gray-100 pb-2">Contact Details</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">Phone</label>
+                    <input type="text" id="set-phone" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">Email Address</label>
+                    <input type="email" id="set-email" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">WhatsApp Number</label>
+                    <input type="text" id="set-whatsapp-num" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  </div>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-gray-700">WhatsApp Message</label>
+                  <input type="text" id="set-whatsapp-msg" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                </div>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-gray-700">Physical Address</label>
+                  <textarea id="set-address" rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50"></textarea>
+                </div>
+              </div>
+
+              <!-- Working Hours -->
+              <div class="space-y-4">
+                <h3 class="font-heading font-extrabold text-sm text-gray-900 border-b border-gray-100 pb-2">Business Hours</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">Weekdays (Mon - Sat)</label>
+                    <input type="text" id="set-hours-weekdays" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">Sunday</label>
+                    <input type="text" id="set-hours-sunday" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Alert Info -->
+              <div id="settings-alert" class="hidden p-4 rounded-xl text-xs font-medium bg-green-50 text-green-700"></div>
+
+              <div class="flex justify-end">
+                <button type="submit" class="btn-primary px-8 py-3 rounded-xl text-xs font-semibold uppercase tracking-wider shadow hover:shadow-lg">
+                  Save Settings Details
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION: INQUIRIES -->
+        <section id="section-inquiries" class="admin-section hidden space-y-6">
+          <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-3.5 px-6">Submitted At</th>
+                  <th class="py-3.5 px-4">Contact Info</th>
+                  <th class="py-3.5 px-4">Subject</th>
+                  <th class="py-3.5 px-4">Message Context</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inquiries-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- PRODUCT ADD/EDIT DOCKING MODAL -->
+  <div id="product-form-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border max-w-lg w-full relative">
+      <button onclick="closeProductForm()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-primary p-2">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <h3 id="product-form-title" class="font-heading font-extrabold text-lg text-gray-900 mb-6">Add Hardwood Product</h3>
+      
+      <form id="product-form" class="space-y-4">
+        <input type="hidden" id="prod-id">
+
+        <div class="space-y-1.5">
+          <label for="prod-name" class="block text-xs font-semibold text-gray-700">Product Name</label>
+          <input type="text" id="prod-name" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. Vintage Guitar Shelf">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label for="prod-category" class="block text-xs font-semibold text-gray-700">Category</label>
+            <select id="prod-category" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+              <!-- Dynamically populated categories -->
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label for="prod-price" class="block text-xs font-semibold text-gray-700">Price (INR)</label>
+            <input type="number" id="prod-price" step="1" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. 18500">
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="prod-description" class="block text-xs font-semibold text-gray-700">Description</label>
+          <textarea id="prod-description" required rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="Describe the materials, size, finish and details..."></textarea>
+        </div>
+
+        <div class="space-y-1">
+          <label class="flex items-center space-x-2 text-xs font-semibold text-gray-700 select-none">
+            <input type="checkbox" id="prod-featured" class="w-4 h-4 text-brand-primary border-gray-300 rounded focus:ring-brand-primary">
+            <span>Show on Home Page (Featured Masterpiece)</span>
+          </label>
+        </div>
+
+        <!-- Direct URL or upload -->
+        <div class="space-y-2 border-t border-gray-100 pt-4">
+          <label class="block text-xs font-semibold text-gray-700">Product Image</label>
+          <div class="flex gap-2">
+            <button type="button" onclick="switchProductImgSrc('url')" id="prod-src-url-btn" class="flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold">Direct URL</button>
+            <button type="button" onclick="switchProductImgSrc('file')" id="prod-src-file-btn" class="flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold">Upload Local Images</button>
+          </div>
+          
+          <!-- URL Input -->
+          <div id="prod-img-url-box" class="space-y-1">
+            <input type="url" id="prod-img-url" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="https://unsplash.com/...">
+          </div>
+          <!-- File Input -->
+          <div id="prod-img-file-box" class="hidden space-y-1">
+            <input type="file" id="prod-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20" multiple>
+            <p class="text-[9px] text-gray-400">You can upload multiple files (up to 5 images). The first image will be used as primary thumbnail.</p>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full btn-primary py-3 rounded-xl text-xs font-semibold uppercase tracking-wider shadow mt-4">
+          Confirm Product Save
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom JS Modules -->
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>
