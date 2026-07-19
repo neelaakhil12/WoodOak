@@ -65,7 +65,7 @@
         <img src="/logo.png" alt="Wood Oak Wonders Logo" class="h-14 sm:h-24 w-auto object-contain transition-all duration-300 group-hover:scale-105 shrink-0">
         <div class="min-w-0">
           <span class="block font-heading font-extrabold text-xs xs:text-base sm:text-xl tracking-tight text-brand-primary dynamic-brand-name truncate">Wood Oak Wonders</span>
-          <span class="block text-[7px] xs:text-[8px] sm:text-[9px] text-brand-secondary tracking-widest uppercase font-semibold mt-0.5 sm:-mt-1 truncate">Wood Edit</span>
+          <span class="block text-[7px] xs:text-[8px] sm:text-[9px] text-brand-secondary tracking-widest uppercase font-semibold mt-0.5 sm:-mt-1 truncate">THE WOOD EDIT</span>
         </div>
       </a>
 
@@ -118,7 +118,7 @@
   <section class="py-24 max-w-7xl mx-auto px-6">
     <!-- Category Filters -->
     <div class="overflow-x-auto sm:overflow-visible pb-3 sm:pb-0 mb-10 sm:mb-16 -mx-2 px-2 sm:mx-0 sm:px-0" data-aos="fade-up">
-      <div class="flex flex-nowrap sm:flex-wrap justify-start sm:justify-center gap-3 w-max sm:w-auto">
+      <div id="gallery-filters-container" class="flex flex-nowrap sm:flex-wrap justify-start sm:justify-center gap-3 w-max sm:w-auto">
         <button class="filter-btn active bg-brand-primary text-white border border-brand-primary px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm whitespace-nowrap" data-category="all">
           All Creations
         </button>
@@ -133,6 +133,15 @@
         </button>
         <button class="filter-btn text-brand-primary hover:bg-brand-lightBg border border-brand-border px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors whitespace-nowrap" data-category="Custom Furniture">
           Custom Furniture
+        </button>
+        <button class="filter-btn text-brand-primary hover:bg-brand-lightBg border border-brand-border px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors whitespace-nowrap" data-category="Sofa Sets">
+          Sofa Sets
+        </button>
+        <button class="filter-btn text-brand-primary hover:bg-brand-lightBg border border-brand-border px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors whitespace-nowrap" data-category="Artistic Decor">
+          Artistic Decor
+        </button>
+        <button class="filter-btn text-brand-primary hover:bg-brand-lightBg border border-brand-border px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors whitespace-nowrap" data-category="Epoxy Tables">
+          Epoxy Tables
         </button>
       </div>
     </div>
@@ -285,7 +294,29 @@
     const nextBtn = document.getElementById('next-lightbox-btn');
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Fetch gallery records
+      // 1. Fetch active categories and render filters dynamically
+      const filtersContainer = document.getElementById('gallery-filters-container');
+      try {
+        const categories = await API.getCategories();
+        if (categories && categories.length > 0) {
+          filtersContainer.innerHTML = `
+            <button class="filter-btn active bg-brand-primary text-white border border-brand-primary px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm whitespace-nowrap" data-category="all">
+              All Creations
+            </button>
+          `;
+          categories.forEach(c => {
+            filtersContainer.insertAdjacentHTML('beforeend', `
+              <button class="filter-btn text-brand-primary hover:bg-brand-lightBg border border-brand-border px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors whitespace-nowrap" data-category="${c.name}">
+                ${c.name}
+              </button>
+            `);
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching dynamic categories for gallery:', err);
+      }
+
+      // 2. Fetch gallery records
       try {
         allGalleryItems = await API.getGallery();
         currentFilteredItems = [...allGalleryItems];
@@ -295,27 +326,28 @@
         grid.innerHTML = '<p class="col-span-full text-center text-red-400 py-12">Failed to load gallery items.</p>';
       }
 
-      // 2. Set up Filters click handlers
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          // Toggle active classes
-          filterBtns.forEach(b => {
-            b.classList.remove('bg-brand-primary', 'text-white', 'border-brand-primary', 'active');
-            b.classList.add('text-brand-primary', 'border-brand-border', 'hover:bg-brand-lightBg');
-          });
+      // 3. Set up Filters click handlers with event delegation
+      filtersContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.filter-btn');
+        if (!btn) return;
 
-          btn.classList.remove('text-brand-primary', 'border-brand-border', 'hover:bg-brand-lightBg');
-          btn.classList.add('bg-brand-primary', 'text-white', 'border-brand-primary', 'active');
-
-          const category = btn.getAttribute('data-category');
-          if (category === 'all') {
-            currentFilteredItems = [...allGalleryItems];
-          } else {
-            currentFilteredItems = allGalleryItems.filter(item => item.category === category);
-          }
-          renderGallery(currentFilteredItems);
+        // Toggle active classes
+        const filterBtns = filtersContainer.querySelectorAll('.filter-btn');
+        filterBtns.forEach(b => {
+          b.classList.remove('bg-brand-primary', 'text-white', 'border-brand-primary', 'active');
+          b.classList.add('text-brand-primary', 'border-brand-border', 'hover:bg-brand-lightBg');
         });
+
+        btn.classList.remove('text-brand-primary', 'border-brand-border', 'hover:bg-brand-lightBg');
+        btn.classList.add('bg-brand-primary', 'text-white', 'border-brand-primary', 'active');
+
+        const category = btn.getAttribute('data-category');
+        if (category === 'all') {
+          currentFilteredItems = [...allGalleryItems];
+        } else {
+          currentFilteredItems = allGalleryItems.filter(item => item.category === category);
+        }
+        renderGallery(currentFilteredItems);
       });
 
       // 3. Lightbox Controls

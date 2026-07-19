@@ -44,33 +44,96 @@
 <body class="bg-gray-50 text-brand-darkText font-sans overflow-x-hidden">
 
   <!-- Login Overlay (Shown when unauthorized) -->
-  <div id="login-overlay" class="fixed inset-0 z-50 bg-[#123e16] flex items-center justify-center p-4">
+  <div id="login-overlay" class="fixed inset-0 z-50 bg-[#0B192C] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-multiply" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80');"></div>
     
-    <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-brand-border max-w-md w-full relative z-10 space-y-6">
-      <div class="text-center">
-        <div class="w-14 h-14 bg-brand-lightBg rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
-          <i data-lucide="lock" class="w-7 h-7"></i>
+    <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-brand-border max-w-md w-full relative z-10">
+      
+      <!-- LOGIN CARD -->
+      <div id="login-card" class="space-y-6">
+        <div class="text-center">
+          <div class="w-14 h-14 bg-brand-lightBg rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
+            <i data-lucide="lock" class="w-7 h-7"></i>
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl text-gray-900">Admin Login</h2>
+          <p class="text-xs text-gray-400 mt-1">Wood Oak Wonders management console</p>
         </div>
-        <h2 class="font-heading font-extrabold text-2xl text-gray-900">Admin Login</h2>
-        <p class="text-xs text-gray-400 mt-1">Wood Oak Wonders management console</p>
+
+        <form id="login-form" class="space-y-4">
+          <div class="space-y-1.5">
+            <label for="login-email" class="block text-xs font-semibold text-gray-700">Email Address</label>
+            <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="e.g. admin@woodoakwonders.com">
+          </div>
+          <div class="space-y-1.5">
+            <label for="login-password" class="block text-xs font-semibold text-gray-700">Password</label>
+            <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="••••••••">
+          </div>
+          <div class="flex justify-end text-xs">
+            <button type="button" id="forgot-password-trigger" class="text-brand-primary hover:underline font-semibold focus:outline-none">Forgot Password?</button>
+          </div>
+          <div id="login-error" class="hidden text-xs text-red-600 bg-red-50 p-3 rounded-lg font-medium"></div>
+
+          <button type="submit" class="w-full btn-primary py-3.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+            Access Console
+          </button>
+        </form>
       </div>
 
-      <form id="login-form" class="space-y-4">
-        <div class="space-y-1.5">
-          <label for="login-username" class="block text-xs font-semibold text-gray-700">Username</label>
-          <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="e.g. admin">
+      <!-- FORGOT PASSWORD CARD -->
+      <div id="forgot-card" class="hidden space-y-6">
+        <div class="text-center">
+          <div class="w-14 h-14 bg-brand-lightBg rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
+            <i data-lucide="mail" class="w-7 h-7"></i>
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl text-gray-900">Reset Password</h2>
+          <p class="text-xs text-gray-400 mt-1">We will send a reset password link to your email</p>
         </div>
-        <div class="space-y-1.5">
-          <label for="login-password" class="block text-xs font-semibold text-gray-700">Password</label>
-          <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="••••••••">
-        </div>
-        <div id="login-error" class="hidden text-xs text-red-600 bg-red-50 p-3 rounded-lg font-medium"></div>
 
-        <button type="submit" class="w-full btn-primary py-3.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
-          Access Console
-        </button>
-      </form>
+        <form id="forgot-form" class="space-y-4">
+          <div class="space-y-1.5">
+            <label for="forgot-email" class="block text-xs font-semibold text-gray-700">Email Address</label>
+            <input type="email" id="forgot-email" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="e.g. kishorebabu1525@gmail.com">
+          </div>
+          <div id="forgot-error" class="hidden text-xs text-red-600 bg-red-50 p-3 rounded-lg font-medium"></div>
+          <div id="forgot-success" class="hidden text-xs text-green-600 bg-green-50 p-3 rounded-lg font-medium"></div>
+
+          <button type="submit" id="forgot-submit-btn" class="w-full btn-primary py-3.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+            Send Reset Link
+          </button>
+          
+          <button type="button" id="forgot-back-btn" class="w-full text-center text-xs font-bold text-gray-500 hover:text-gray-700 uppercase tracking-wider transition-colors pt-2 block focus:outline-none">
+            Back to Login
+          </button>
+        </form>
+      </div>
+
+      <!-- RESET PASSWORD CARD -->
+      <div id="reset-card" class="hidden space-y-6">
+        <div class="text-center">
+          <div class="w-14 h-14 bg-brand-lightBg rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4">
+            <i data-lucide="key-round" class="w-7 h-7"></i>
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl text-gray-900">Choose New Password</h2>
+          <p class="text-xs text-gray-400 mt-1">Please enter your new password below</p>
+        </div>
+
+        <form id="reset-form" class="space-y-4">
+          <div class="space-y-1.5">
+            <label for="reset-password-input" class="block text-xs font-semibold text-gray-700">New Password</label>
+            <input type="password" id="reset-password-input" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="••••••••">
+          </div>
+          <div class="space-y-1.5">
+            <label for="reset-confirm-password" class="block text-xs font-semibold text-gray-700">Confirm New Password</label>
+            <input type="password" id="reset-confirm-password" required class="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-primary focus:outline-none text-sm bg-gray-50" placeholder="••••••••">
+          </div>
+          <div id="reset-error" class="hidden text-xs text-red-600 bg-red-50 p-3 rounded-lg font-medium"></div>
+          <div id="reset-success" class="hidden text-xs text-green-600 bg-green-50 p-3 rounded-lg font-medium"></div>
+
+          <button type="submit" class="w-full btn-primary py-3.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+            Reset Password
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -97,7 +160,7 @@
           </button>
           <button data-section="products" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
             <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-            <span>Products</span>
+            <span>Services</span>
           </button>
           <button data-section="categories" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
             <i data-lucide="tag" class="w-4 h-4"></i>
@@ -107,9 +170,13 @@
             <i data-lucide="image" class="w-4 h-4"></i>
             <span>Gallery</span>
           </button>
+          <button data-section="heroslides" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
+            <i data-lucide="monitor" class="w-4 h-4"></i>
+            <span>Hero Slides</span>
+          </button>
           <button data-section="services" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
             <i data-lucide="wrench" class="w-4 h-4"></i>
-            <span>Services</span>
+            <span>Service Cards</span>
           </button>
           <button data-section="testimonials" class="nav-link w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors">
             <i data-lucide="message-square-quote" class="w-4 h-4"></i>
@@ -155,7 +222,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
               <div>
-                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Products</span>
+                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Services</span>
                 <span id="stat-products" class="block font-heading font-extrabold text-3xl mt-1">0</span>
               </div>
               <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
@@ -210,14 +277,14 @@
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <!-- Search & Filters -->
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <input type="text" id="product-search" class="px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none w-48 bg-white" placeholder="Search products...">
+              <input type="text" id="product-search" class="px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none w-48 bg-white" placeholder="Search services...">
               <select id="product-filter-category" class="px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none bg-white">
                 <option value="">All Categories</option>
               </select>
             </div>
             <button onclick="openProductForm()" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 shrink-0">
               <i data-lucide="plus" class="w-4 h-4"></i>
-              <span>Add Product</span>
+              <span>Add Service</span>
             </button>
           </div>
 
@@ -229,7 +296,6 @@
                   <th class="py-3.5 px-6">Image</th>
                   <th class="py-3.5 px-4">Name</th>
                   <th class="py-3.5 px-4">Category</th>
-                  <th class="py-3.5 px-4">Price</th>
                   <th class="py-3.5 px-4 text-center">Featured</th>
                   <th class="py-3.5 px-6 text-right">Actions</th>
                 </tr>
@@ -310,33 +376,59 @@
               <div class="space-y-1.5">
                 <label for="gallery-category" class="block text-xs font-semibold text-gray-700">Category Tag</label>
                 <select id="gallery-category" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
-                  <option value="Shelves">Shelves</option>
-                  <option value="Corner Stands">Corner Stands</option>
-                  <option value="Bar Cabinets">Bar Cabinets</option>
-                  <option value="Custom Furniture">Custom Furniture</option>
+                  <!-- Loaded dynamically -->
                 </select>
               </div>
               
-              <!-- Direct URL or upload -->
+              <!-- Image Upload -->
               <div class="space-y-2 border-t border-gray-100 pt-4">
-                <label class="block text-xs font-semibold text-gray-700">Image Source</label>
-                <div class="flex gap-2">
-                  <button type="button" onclick="switchGalleryImgSrc('url')" id="gallery-src-url-btn" class="flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold">Direct URL</button>
-                  <button type="button" onclick="switchGalleryImgSrc('file')" id="gallery-src-file-btn" class="flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold">Local File</button>
-                </div>
-                
-                <!-- URL Input -->
-                <div id="gallery-img-url-box" class="space-y-1">
-                  <input type="url" id="gallery-img-url" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="https://unsplash.com/...">
-                </div>
-                <!-- File Input -->
-                <div id="gallery-img-file-box" class="hidden space-y-1">
-                  <input type="file" id="gallery-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20">
-                </div>
+                <label class="block text-xs font-semibold text-gray-700">Gallery Image</label>
+                <input type="hidden" id="gallery-img-url">
+                <input type="file" id="gallery-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20">
               </div>
 
               <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
                 Save Image Item
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION: HERO SLIDES -->
+        <section id="section-heroslides" class="admin-section hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Table -->
+          <div class="lg:col-span-8 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-3.5 px-6">Slide Preview</th>
+                  <th class="py-3.5 px-4">Sort Order</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="heroslides-table-body">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Form Add -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+            <h3 class="font-heading font-bold text-gray-900 text-sm">Add Hero Slide</h3>
+            <form id="heroslides-form" class="space-y-4">
+              <div class="space-y-1.5">
+                <label for="slide-sort-order" class="block text-xs font-semibold text-gray-700">Sort Order</label>
+                <input type="number" id="slide-sort-order" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. 1" value="1">
+              </div>
+              
+              <!-- Image Upload -->
+              <div class="space-y-2 border-t border-gray-100 pt-4">
+                <label class="block text-xs font-semibold text-gray-700">Slide Image</label>
+                <input type="hidden" id="slide-img-url">
+                <input type="file" id="slide-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20">
+              </div>
+
+              <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
+                Save Hero Slide
               </button>
             </form>
           </div>
@@ -381,8 +473,17 @@
                   <option value="Grid">Grid</option>
                   <option value="Wine">Wine</option>
                   <option value="Briefcase">Briefcase</option>
+                  <option value="Sparkles">Sparkles</option>
                 </select>
               </div>
+
+              <!-- Custom Image (Optional) -->
+              <div class="space-y-2 border-t border-gray-100 pt-4">
+                <label class="block text-xs font-semibold text-gray-700">Custom Image (Optional)</label>
+                <input type="hidden" id="service-img-url">
+                <input type="file" id="service-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20">
+              </div>
+
               <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow">
                 Save Service
               </button>
@@ -559,17 +660,12 @@
           <input type="text" id="prod-name" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. Vintage Guitar Shelf">
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="space-y-1.5">
-            <label for="prod-category" class="block text-xs font-semibold text-gray-700">Category</label>
-            <select id="prod-category" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
-              <!-- Dynamically populated categories -->
-            </select>
-          </div>
-          <div class="space-y-1.5">
-            <label for="prod-price" class="block text-xs font-semibold text-gray-700">Price (INR)</label>
-            <input type="number" id="prod-price" step="1" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="e.g. 18500">
-          </div>
+        <div class="space-y-1.5">
+          <label for="prod-category" class="block text-xs font-semibold text-gray-700">Category</label>
+          <select id="prod-category" required class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50">
+            <!-- Dynamically populated categories -->
+          </select>
+          <input type="hidden" id="prod-price" value="0">
         </div>
 
         <div class="space-y-1.5">
@@ -584,23 +680,12 @@
           </label>
         </div>
 
-        <!-- Direct URL or upload -->
+        <!-- Image Upload -->
         <div class="space-y-2 border-t border-gray-100 pt-4">
           <label class="block text-xs font-semibold text-gray-700">Product Image</label>
-          <div class="flex gap-2">
-            <button type="button" onclick="switchProductImgSrc('url')" id="prod-src-url-btn" class="flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold">Direct URL</button>
-            <button type="button" onclick="switchProductImgSrc('file')" id="prod-src-file-btn" class="flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold">Upload Local Images</button>
-          </div>
-          
-          <!-- URL Input -->
-          <div id="prod-img-url-box" class="space-y-1">
-            <input type="url" id="prod-img-url" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-gray-50" placeholder="https://unsplash.com/...">
-          </div>
-          <!-- File Input -->
-          <div id="prod-img-file-box" class="hidden space-y-1">
-            <input type="file" id="prod-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20" multiple>
-            <p class="text-[9px] text-gray-400">You can upload multiple files (up to 5 images). The first image will be used as primary thumbnail.</p>
-          </div>
+          <input type="hidden" id="prod-img-url">
+          <input type="file" id="prod-img-file" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20" multiple>
+          <p class="text-[9px] text-gray-400">You can upload multiple files (up to 5 images). The first image will be used as primary thumbnail.</p>
         </div>
 
         <button type="submit" class="w-full btn-primary py-3 rounded-xl text-xs font-semibold uppercase tracking-wider shadow mt-4">

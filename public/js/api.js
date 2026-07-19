@@ -77,6 +77,26 @@ const API = {
     return await res.json();
   },
 
+  // Hero Slides
+  async getHeroSlides() {
+    const res = await fetch('/api/hero_slides');
+    return await res.json();
+  },
+
+  async createHeroSlide(slideData) {
+    const res = await fetch('/api/hero_slides', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(slideData)
+    });
+    return await res.json();
+  },
+
+  async deleteHeroSlide(id) {
+    const res = await fetch(`/api/hero_slides/${id}`, { method: 'DELETE' });
+    return await res.json();
+  },
+
   // Services
   async getServices() {
     const res = await fetch('/api/services');
@@ -153,11 +173,11 @@ const API = {
   },
 
   // Auth
-  async login(username, password) {
+  async login(email, password) {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ email, password })
     });
     return await res.json();
   },
@@ -183,6 +203,24 @@ const API = {
     const res = await fetch('/api/upload', {
       method: 'POST',
       body: formData
+    });
+    return await res.json();
+  },
+
+  async forgotPassword(email) {
+    const res = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    return await res.json();
+  },
+
+  async resetPassword(email, token, newPassword) {
+    const res = await fetch('/api/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, token, newPassword })
     });
     return await res.json();
   }

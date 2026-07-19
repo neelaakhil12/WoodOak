@@ -1,12 +1,19 @@
 const express = require('express');
-const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
+const cloudinary = require('cloudinary').v2;
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const db = require('./database');
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,30 +47,86 @@ if (isVercel) {
   app.use('/uploads', express.static('/tmp/uploads'));
 }
 
-// Sessions setup
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'wood_oak_wonders_secret_key_2026',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { 
-    maxAge: 24 * 60 * 60 * 1000, // 24 Hours
-    httpOnly: true 
-  }
-}));
+// Persistent Session Store Setup
+const os = require('os');
+const SESSION_FILE = path.join(os.tmpdir(), 'wood_oak_wonders_sessions.json');
+let sessionsMap = new Map();
 
-// Multer Storage Configuration for multiple files
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+try {
+  if (fs.existsSync(SESSION_FILE)) {
+    const fileData = fs.readFileSync(SESSION_FILE, 'utf8');
+    if (fileData.trim()) {
+      const data = JSON.parse(fileData);
+      sessionsMap = new Map(Object.entries(data));
+    }
   }
+} catch (err) {
+  console.error('Error loading sessions:', err);
+}
+
+function saveSessions() {
+  try {
+    const data = Object.fromEntries(sessionsMap);
+    fs.writeFileSync(SESSION_FILE, JSON.stringify(data), 'utf8');
+  } catch (err) {
+    console.error('Error saving sessions:', err);
+  }
+}
+
+// Custom Session Middleware
+app.use((req, res, next) => {
+  const cookieHeader = req.headers.cookie || '';
+  let sessionId = '';
+  const cookies = cookieHeader.split(';');
+  for (let c of cookies) {
+    const parts = c.trim().split('=');
+    if (parts[0] === 'admin_sid') {
+      sessionId = parts[1];
+      break;
+    }
+  }
+
+  if (!sessionId) {
+    sessionId = require('crypto').randomBytes(16).toString('hex');
+    res.cookie('admin_sid', sessionId, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+  }
+
+  let sessionObj = sessionsMap.get(sessionId);
+  if (!sessionObj) {
+    sessionObj = {};
+    sessionsMap.set(sessionId, sessionObj);
+  }
+
+  req.session = sessionObj;
+
+  req.session.destroy = (callback) => {
+    sessionsMap.delete(sessionId);
+    saveSessions();
+    res.clearCookie('admin_sid');
+    if (callback) callback();
+  };
+
+  // Intercept response sends to auto-save session state
+  const originalJson = res.json;
+  res.json = function(data) {
+    saveSessions();
+    return originalJson.apply(this, arguments);
+  };
+
+  const originalSend = res.send;
+  res.send = function(data) {
+    saveSessions();
+    return originalSend.apply(this, arguments);
+  };
+
+  next();
 });
+
+// Multer Storage Configuration (in-memory for Cloudinary upload streaming)
+const storage = multer.memoryStorage();
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
 // Authentication middleware
@@ -78,28 +141,123 @@ function requireAdmin(req, res, next) {
 // ================= AUTHENTICATION APIs =================
 
 app.post('/api/auth/login', async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required' });
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
   }
 
   try {
-    const rows = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+    const rows = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const user = rows[0];
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     req.session.isAdmin = true;
-    req.session.username = user.username;
-    res.json({ success: true, message: 'Logged in successfully', username: user.username });
+    req.session.username = user.email;
+    res.json({ success: true, message: 'Logged in successfully', username: user.email });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Temporary in-memory token store (email -> { token, expires })
+const resetsStore = new Map();
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+    const rows = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Admin account with this email not found' });
+    }
+
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    resetsStore.set(email.toLowerCase(), {
+      token,
+      expires: Date.now() + 15 * 60 * 1000 // 15 minutes
+    });
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD
+      }
+    });
+
+    const resetLink = `http://localhost:3000/adminlogin?action=reset&email=${encodeURIComponent(email)}&token=${token}`;
+
+    const mailOptions = {
+      from: process.env.SMTP_FROM || `"Wood Oak Wonders" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: 'Reset Password Link - Wood Oak Wonders Admin',
+      text: `Click this link to reset your admin password: ${resetLink}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
+          <h2 style="color: #0B192C; text-align: center;">Reset Admin Password</h2>
+          <p>Hello,</p>
+          <p>We received a request to reset your admin account password for <strong>Wood Oak Wonders</strong>.</p>
+          <p>Click the button below to choose a new password. This link is valid for 15 minutes:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetLink}" style="background-color: #0B192C; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block;">Reset Password</a>
+          </div>
+          <p style="color: #6b7280; font-size: 14px;">Or copy and paste this URL into your browser:</p>
+          <p style="color: #3b82f6; font-size: 13px; word-break: break-all;"><a href="${resetLink}">${resetLink}</a></p>
+          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+          <p style="font-size: 12px; color: #9ca3af; text-align: center;">Wood Oak Wonders &copy; 2026</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true, message: 'Password reset link sent to your email successfully.' });
+  } catch (err) {
+    console.error('Error in forgot-password:', err);
+    res.status(500).json({ error: 'Failed to send recovery email. Details: ' + err.message });
+  }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { email, token, newPassword } = req.body;
+  if (!email || !token || !newPassword) {
+    return res.status(400).json({ error: 'All fields (email, token, new password) are required' });
+  }
+
+  const record = resetsStore.get(email.toLowerCase());
+  if (!record) {
+    return res.status(400).json({ error: 'No active reset request found for this email' });
+  }
+
+  if (record.token !== token) {
+    return res.status(400).json({ error: 'Invalid reset token' });
+  }
+
+  if (record.expires < Date.now()) {
+    resetsStore.delete(email.toLowerCase());
+    return res.status(400).json({ error: 'Reset token has expired' });
+  }
+
+  try {
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await db.run('UPDATE users SET password_hash = ? WHERE email = ?', [hashed, email.toLowerCase()]);
+    
+    resetsStore.delete(email.toLowerCase());
+    res.json({ success: true, message: 'Password has been reset successfully. You can now log in.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to reset password: ' + err.message });
   }
 });
 
@@ -463,13 +621,76 @@ app.get('/api/stats', requireAdmin, async (req, res) => {
 
 // ================= FILE UPLOAD API (SUPPORT MULTIPLE IMAGES) =================
 
-app.post('/api/upload', requireAdmin, upload.array('images', 5), (req, res) => {
+app.post('/api/upload', requireAdmin, upload.array('images', 5), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ error: 'No files uploaded' });
   }
   
-  const urls = req.files.map(file => `/uploads/${file.filename}`);
-  res.json({ success: true, urls });
+  try {
+    const uploadPromises = req.files.map(file => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'wood_oak_wonders' },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result.secure_url);
+          }
+        );
+        stream.end(file.buffer);
+      });
+    });
+
+    const urls = await Promise.all(uploadPromises);
+    res.json({ success: true, urls });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to upload to Cloudinary: ' + err.message });
+  }
+});
+
+// ================= HERO SLIDES APIs =================
+
+app.get('/api/hero_slides', async (req, res) => {
+  try {
+    const rows = await db.query('SELECT * FROM hero_slides ORDER BY sort_order ASC');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/hero_slides', requireAdmin, async (req, res) => {
+  const { image_url, sort_order } = req.body;
+  if (!image_url) {
+    return res.status(400).json({ error: 'Image URL is required' });
+  }
+  try {
+    const result = await db.run(
+      'INSERT INTO hero_slides (image_url, sort_order) VALUES (?, ?)',
+      [image_url, sort_order || 0]
+    );
+    res.status(201).json({ id: result.insertId, image_url, sort_order });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/hero_slides/:id', requireAdmin, async (req, res) => {
+  try {
+    await db.run('DELETE FROM hero_slides WHERE id = ?', [req.params.id]);
+    res.json({ success: true, message: 'Hero slide deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin Panel Access Route (serves public/admin.html)
+app.get('/adminlogin', (req, res) => {
+  res.sendFile(path.join(publicDir, 'admin.html'));
+});
+
+// Redirect direct requests from admin.html to adminlogin
+app.get('/admin.html', (req, res) => {
+  res.redirect('/adminlogin');
 });
 
 // Fallback for SPA routing if needed (optional)

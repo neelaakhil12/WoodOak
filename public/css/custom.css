@@ -302,7 +302,7 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0;
   background-size: cover;
   background-position: center;
-  transition: opacity 1.5s ease-in-out;
+  transition: opacity 0.8s ease-in-out;
   z-index: 0;
 }
 .hero-slide.opacity-0 {

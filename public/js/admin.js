@@ -9,8 +9,8 @@ let productLimit = 8;
 let productPagesCount = 1;
 
 // Image source modes
-let productImgSrcMode = 'url'; // 'url' or 'file'
-let galleryImgSrcMode = 'url';  // 'url' or 'file'
+let productImgSrcMode = 'file'; // 'url' or 'file'
+let galleryImgSrcMode = 'file';  // 'url' or 'file'
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Initialize Lucide Icons
@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       loginError.classList.add('hidden');
-      const u = document.getElementById('login-username').value;
+      const email = document.getElementById('login-email').value;
       const p = document.getElementById('login-password').value;
 
       try {
-        const res = await API.login(u, p);
+        const res = await API.login(email, p);
         if (res.success) {
           loginForm.reset();
           await checkSession();
@@ -40,6 +40,116 @@ document.addEventListener('DOMContentLoaded', async () => {
       } catch (err) {
         loginError.textContent = err.message || 'Login failed';
         loginError.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Forgot Password / Reset Password Card Switching & Forms
+  const loginCard = document.getElementById('login-card');
+  const forgotCard = document.getElementById('forgot-card');
+  const resetCard = document.getElementById('reset-card');
+  
+  const forgotTrigger = document.getElementById('forgot-password-trigger');
+  const forgotBackBtn = document.getElementById('forgot-back-btn');
+  const forgotForm = document.getElementById('forgot-form');
+  const forgotError = document.getElementById('forgot-error');
+  const forgotSuccess = document.getElementById('forgot-success');
+  const forgotSubmitBtn = document.getElementById('forgot-submit-btn');
+
+  const resetForm = document.getElementById('reset-form');
+  const resetError = document.getElementById('reset-error');
+  const resetSuccess = document.getElementById('reset-success');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const action = urlParams.get('action');
+  const emailParam = urlParams.get('email');
+  const tokenParam = urlParams.get('token');
+
+  if (action === 'reset' && emailParam && tokenParam) {
+    if (loginCard) loginCard.classList.add('hidden');
+    if (forgotCard) forgotCard.classList.add('hidden');
+    if (resetCard) resetCard.classList.remove('hidden');
+  }
+
+  if (forgotTrigger) {
+    forgotTrigger.addEventListener('click', () => {
+      loginCard.classList.add('hidden');
+      forgotCard.classList.remove('hidden');
+      forgotForm.reset();
+      forgotError.classList.add('hidden');
+      forgotSuccess.classList.add('hidden');
+    });
+  }
+
+  if (forgotBackBtn) {
+    forgotBackBtn.addEventListener('click', () => {
+      forgotCard.classList.add('hidden');
+      loginCard.classList.remove('hidden');
+    });
+  }
+
+  if (forgotForm) {
+    forgotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      forgotError.classList.add('hidden');
+      forgotSuccess.classList.add('hidden');
+      const email = document.getElementById('forgot-email').value;
+
+      forgotSubmitBtn.disabled = true;
+      forgotSubmitBtn.textContent = 'Sending Link...';
+
+      try {
+        const res = await API.forgotPassword(email);
+        if (res.success) {
+          forgotSuccess.textContent = res.message;
+          forgotSuccess.classList.remove('hidden');
+          forgotForm.reset();
+        } else {
+          throw new Error(res.error || 'Failed to send recovery email.');
+        }
+      } catch (err) {
+        forgotError.textContent = err.message || 'Verification link dispatch failed';
+        forgotError.classList.remove('hidden');
+      } finally {
+        forgotSubmitBtn.disabled = false;
+        forgotSubmitBtn.textContent = 'Send Reset Link';
+      }
+    });
+  }
+
+  if (resetForm) {
+    resetForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resetError.classList.add('hidden');
+      resetSuccess.classList.add('hidden');
+
+      const newPassword = document.getElementById('reset-password-input').value;
+      const confirmPassword = document.getElementById('reset-confirm-password').value;
+
+      if (newPassword !== confirmPassword) {
+        resetError.textContent = 'Passwords do not match!';
+        resetError.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await API.resetPassword(emailParam, tokenParam, newPassword);
+        if (res.success) {
+          resetSuccess.textContent = res.message + ' Redirecting to login...';
+          resetSuccess.classList.remove('hidden');
+          resetForm.reset();
+          
+          setTimeout(() => {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            resetCard.classList.add('hidden');
+            if (loginCard) loginCard.classList.remove('hidden');
+          }, 3000);
+        } else {
+          throw new Error(res.error || 'Reset password failed.');
+        }
+      } catch (err) {
+        resetError.textContent = err.message || 'Could not reset password';
+        resetError.classList.remove('hidden');
       }
     });
   }
@@ -137,10 +247,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       const title = document.getElementById('service-title').value;
       const description = document.getElementById('service-description').value;
       const icon = document.getElementById('service-icon').value;
+      let image_url = '';
+
+      if (serviceImgSrcMode === 'file') {
+        const fileInput = document.getElementById('service-img-file');
+        if (fileInput.files.length > 0) {
+          const fd = new FormData();
+          fd.append('images', fileInput.files[0]);
+          const uploadRes = await API.uploadImages(fd);
+          if (uploadRes.success) {
+            image_url = uploadRes.urls[0];
+          } else {
+            alert('Upload failed: ' + uploadRes.error);
+            return;
+          }
+        }
+      } else {
+        image_url = document.getElementById('service-img-url').value;
+      }
 
       try {
-        await API.createService({ title, description, icon });
+        await API.createService({ title, description, icon, image_url });
         servicesForm.reset();
+        document.getElementById('service-img-file').value = '';
         await loadServicesData();
       } catch (err) {
         alert('Failed to save service');
@@ -332,6 +461,7 @@ async function loadGlobalData() {
     // Populate select boxes in forms
     const categorySelect = document.getElementById('prod-category');
     const categoryFilter = document.getElementById('product-filter-category');
+    const galleryCatSelect = document.getElementById('gallery-category');
     
     if (categorySelect && categoryFilter) {
       categorySelect.innerHTML = '';
@@ -340,6 +470,13 @@ async function loadGlobalData() {
       categoriesList.forEach(c => {
         categorySelect.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name}</option>`);
         categoryFilter.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name}</option>`);
+      });
+    }
+
+    if (galleryCatSelect) {
+      galleryCatSelect.innerHTML = '';
+      categoriesList.forEach(c => {
+        galleryCatSelect.insertAdjacentHTML('beforeend', `<option value="${c.name}">${c.name}</option>`);
       });
     }
   } catch (e) {
@@ -362,7 +499,10 @@ function switchSection(target) {
   // Update header text
   const sectionTitle = document.getElementById('section-title');
   if (sectionTitle) {
-    sectionTitle.textContent = target.charAt(0).toUpperCase() + target.slice(1);
+    let title = target.charAt(0).toUpperCase() + target.slice(1);
+    if (target === 'products') title = 'Services';
+    if (target === 'services') title = 'Service Cards';
+    sectionTitle.textContent = title;
   }
 
   // Load specific section records
@@ -370,6 +510,7 @@ function switchSection(target) {
   if (target === 'products') loadProductsData();
   if (target === 'categories') loadCategoriesData();
   if (target === 'gallery') loadGalleryData();
+  if (target === 'heroslides') loadHeroSlidesData();
   if (target === 'services') loadServicesData();
   if (target === 'testimonials') loadTestimonialsData();
   if (target === 'settings') loadSettingsData();
@@ -436,7 +577,7 @@ async function loadProductsData() {
     container.innerHTML = '';
 
     if (!data.products || data.products.length === 0) {
-      container.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-gray-400">No products match search criteria.</td></tr>';
+      container.innerHTML = '<tr><td colspan="5" class="text-center py-10 text-gray-400">No products match search criteria.</td></tr>';
       return;
     }
 
@@ -448,7 +589,6 @@ async function loadProductsData() {
     document.getElementById('product-next-page').disabled = productPage === productPagesCount;
 
     data.products.forEach(p => {
-      const priceFormatted = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(p.price || 0);
       const featuredBadge = p.is_featured === 1 
         ? `<span class="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Yes</span>` 
         : `<span class="bg-gray-100 text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">No</span>`;
@@ -458,7 +598,6 @@ async function loadProductsData() {
           <td class="py-3 px-6"><img src="${p.image_url}" alt="" class="w-10 h-10 object-cover rounded-lg border border-brand-border bg-gray-50"></td>
           <td class="py-3 px-4 font-bold text-gray-900">${p.name}</td>
           <td class="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-brand-primary">${p.category_name || 'Uncategorized'}</td>
-          <td class="py-3 px-4 font-bold">${priceFormatted}</td>
           <td class="py-3 px-4 text-center">${featuredBadge}</td>
           <td class="py-3 px-6 text-right space-x-2 whitespace-nowrap">
             <button onclick="editProduct(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="text-brand-primary hover:text-brand-secondary p-1" title="Edit Product"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
@@ -479,8 +618,8 @@ async function loadProductsData() {
 function openProductForm() {
   document.getElementById('product-form').reset();
   document.getElementById('prod-id').value = '';
-  document.getElementById('product-form-title').textContent = 'Add Hardwood Product';
-  switchProductImgSrc('url');
+  document.getElementById('product-form-title').textContent = 'Add Handcrafted Service';
+  switchProductImgSrc('file');
 
   const modal = document.getElementById('product-form-modal');
   modal.classList.remove('hidden');
@@ -501,6 +640,8 @@ function switchProductImgSrc(mode) {
   const urlBox = document.getElementById('prod-img-url-box');
   const fileBox = document.getElementById('prod-img-file-box');
 
+  if (!urlBtn || !fileBtn || !urlBox || !fileBox) return;
+
   if (mode === 'url') {
     urlBtn.className = "flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold";
     fileBtn.className = "flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold";
@@ -516,7 +657,7 @@ function switchProductImgSrc(mode) {
 
 function editProduct(product) {
   document.getElementById('product-form').reset();
-  document.getElementById('product-form-title').textContent = 'Edit Hardwood Product';
+  document.getElementById('product-form-title').textContent = 'Edit Handcrafted Service';
   
   document.getElementById('prod-id').value = product.id;
   document.getElementById('prod-name').value = product.name;
@@ -526,7 +667,7 @@ function editProduct(product) {
   document.getElementById('prod-featured').checked = product.is_featured === 1;
 
   // Set file values
-  switchProductImgSrc('url');
+  switchProductImgSrc('file');
   document.getElementById('prod-img-url').value = product.image_url;
 
   const modal = document.getElementById('product-form-modal');
@@ -631,6 +772,8 @@ function switchGalleryImgSrc(mode) {
   const urlBox = document.getElementById('gallery-img-url-box');
   const fileBox = document.getElementById('gallery-img-file-box');
 
+  if (!urlBtn || !fileBtn || !urlBox || !fileBox) return;
+
   if (mode === 'url') {
     urlBtn.className = "flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold";
     fileBtn.className = "flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold";
@@ -670,9 +813,13 @@ async function loadServicesData() {
     }
 
     list.forEach(s => {
+      const previewHtml = s.image_url 
+        ? `<img src="${s.image_url}" class="w-10 h-10 object-cover rounded-lg border border-brand-border bg-gray-50">`
+        : `<i data-lucide="${s.icon.toLowerCase()}" class="w-5 h-5"></i>`;
+
       container.insertAdjacentHTML('beforeend', `
         <tr class="border-b border-gray-100 hover:bg-gray-50 text-gray-600 font-medium">
-          <td class="py-3 px-6 text-brand-primary font-bold"><i data-lucide="${s.icon.toLowerCase()}" class="w-5 h-5"></i></td>
+          <td class="py-3 px-6 text-brand-primary font-bold flex items-center h-16">${previewHtml}</td>
           <td class="py-3 px-4 font-bold text-gray-900">${s.title}</td>
           <td class="py-3 px-4 text-xs font-light max-w-xs truncate">${s.description}</td>
           <td class="py-3 px-6 text-right">
@@ -808,6 +955,132 @@ async function deleteInquiry(id) {
   }
 }
 
+// ================= HERO SLIDES CONTROLLER LOGIC =================
+let slideImgSrcMode = 'file';
+function switchSlideImgSrc(mode) {
+  slideImgSrcMode = mode;
+  const urlBtn = document.getElementById('slide-src-url-btn');
+  const fileBtn = document.getElementById('slide-src-file-btn');
+  const urlBox = document.getElementById('slide-img-url-box');
+  const fileBox = document.getElementById('slide-img-file-box');
+
+  if (!urlBtn || !fileBtn || !urlBox || !fileBox) return;
+
+  if (mode === 'url') {
+    urlBtn.className = "flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold";
+    fileBtn.className = "flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold";
+    urlBox.classList.remove('hidden');
+    fileBox.classList.add('hidden');
+  } else {
+    fileBtn.className = "flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold";
+    urlBtn.className = "flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold";
+    fileBox.classList.remove('hidden');
+    urlBox.classList.add('hidden');
+  }
+}
+
+// Hero Slide submit handling
+const heroslidesForm = document.getElementById('heroslides-form');
+if (heroslidesForm) {
+  heroslidesForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const sort_order = parseInt(document.getElementById('slide-sort-order').value || 0);
+    let image_url = '';
+
+    if (slideImgSrcMode === 'file') {
+      const fileInput = document.getElementById('slide-img-file');
+      if (fileInput.files.length === 0) {
+        alert('Please select a slide image file to upload.');
+        return;
+      }
+      const fd = new FormData();
+      fd.append('images', fileInput.files[0]);
+      const uploadRes = await API.uploadImages(fd);
+      if (uploadRes.success) {
+        image_url = uploadRes.urls[0];
+      } else {
+        alert('Upload failed: ' + uploadRes.error);
+        return;
+      }
+    } else {
+      image_url = document.getElementById('slide-img-url').value;
+    }
+
+    try {
+      await API.createHeroSlide({ image_url, sort_order });
+      heroslidesForm.reset();
+      document.getElementById('slide-img-file').value = '';
+      await loadHeroSlidesData();
+    } catch (err) {
+      alert('Failed to save hero slide');
+    }
+  });
+}
+
+async function loadHeroSlidesData() {
+  const container = document.getElementById('heroslides-table-body');
+  if (!container) return;
+  try {
+    const list = await API.getHeroSlides();
+    container.innerHTML = '';
+
+    if (list.length === 0) {
+      container.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-gray-400">No hero slides found.</td></tr>';
+      return;
+    }
+
+    list.forEach(s => {
+      container.insertAdjacentHTML('beforeend', `
+        <tr class="border-b border-gray-100 hover:bg-gray-50 text-gray-600 font-medium">
+          <td class="py-3 px-6"><img src="${s.image_url}" class="w-24 h-12 object-cover rounded-lg border border-brand-border bg-gray-50"></td>
+          <td class="py-3 px-4 font-bold text-gray-900">${s.sort_order}</td>
+          <td class="py-3 px-6 text-right">
+            <button onclick="deleteHeroSlide(${s.id})" class="text-red-500 hover:text-red-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </td>
+        </tr>
+      `);
+    });
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function deleteHeroSlide(id) {
+  if (confirm('Delete this hero slide?')) {
+    try {
+      await API.deleteHeroSlide(id);
+      await loadHeroSlidesData();
+    } catch (e) {
+      alert('Delete failed');
+    }
+  }
+}
+
+// ================= SERVICES IMAGE SOURCE SELECTOR =================
+let serviceImgSrcMode = 'file';
+function switchServiceImgSrc(mode) {
+  serviceImgSrcMode = mode;
+  const urlBtn = document.getElementById('service-src-url-btn');
+  const fileBtn = document.getElementById('service-src-file-btn');
+  const urlBox = document.getElementById('service-img-url-box');
+  const fileBox = document.getElementById('service-img-file-box');
+
+  if (!urlBtn || !fileBtn || !urlBox || !fileBox) return;
+
+  if (mode === 'url') {
+    urlBtn.className = "flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold";
+    fileBtn.className = "flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold";
+    urlBox.classList.remove('hidden');
+    fileBox.classList.add('hidden');
+  } else {
+    fileBtn.className = "flex-1 bg-brand-primary text-white px-3 py-1 rounded-lg text-[10px] font-bold";
+    urlBtn.className = "flex-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-bold";
+    fileBox.classList.remove('hidden');
+    urlBox.classList.add('hidden');
+  }
+}
+
 // Global exposing of handlers
 window.openProductForm = openProductForm;
 window.closeProductForm = closeProductForm;
@@ -820,3 +1093,6 @@ window.deleteGallery = deleteGallery;
 window.deleteService = deleteService;
 window.deleteTestimonial = deleteTestimonial;
 window.deleteInquiry = deleteInquiry;
+window.switchSlideImgSrc = switchSlideImgSrc;
+window.deleteHeroSlide = deleteHeroSlide;
+window.switchServiceImgSrc = switchServiceImgSrc;
