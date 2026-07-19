@@ -638,6 +638,25 @@ app.get('/api/stats', requireAdmin, async (req, res) => {
 
 // ================= FILE UPLOAD API (SUPPORT MULTIPLE IMAGES) =================
 
+// Generate a signed upload signature for direct browser-to-Cloudinary uploads
+app.get('/api/upload-signature', requireAdmin, (req, res) => {
+  try {
+    const timestamp = Math.round(Date.now() / 1000);
+    const params = { folder: 'wood_oak_wonders', timestamp };
+    const signature = cloudinary.utils.api_sign_request(params, process.env.CLOUDINARY_API_SECRET);
+    res.json({
+      signature,
+      timestamp,
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      folder: 'wood_oak_wonders'
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to generate upload signature: ' + err.message });
+  }
+});
+
+// Legacy server-side upload (kept as fallback)
 app.post('/api/upload', requireAdmin, upload.array('images', 5), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ error: 'No files uploaded' });
