@@ -371,6 +371,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (productForm) {
     productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const submitBtn = productForm.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+        submitBtn.innerHTML = 'Uploading & Saving...';
+      }
+
+      const enableBtn = () => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = submitBtn.dataset.originalHtml || 'Confirm Product Save';
+        }
+      };
+
       const id = document.getElementById('prod-id').value;
       const name = document.getElementById('prod-name').value;
       const category_id = parseInt(document.getElementById('prod-category').value) || null;
@@ -379,36 +394,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       const is_featured = document.getElementById('prod-featured').checked ? 1 : 0;
       let image_url = '';
 
-      if (productImgSrcMode === 'file') {
-        const fileInput = document.getElementById('prod-img-file');
-        if (fileInput.files.length === 0 && !id) {
-          alert('Please select files to upload.');
-          return;
-        }
-
-        if (fileInput.files.length > 0) {
-          const fd = new FormData();
-          for (let i = 0; i < fileInput.files.length; i++) {
-            fd.append('images', fileInput.files[i]);
-          }
-          const uploadRes = await API.uploadImages(fd);
-          if (uploadRes.success) {
-            image_url = uploadRes.urls[0]; // Primary thumbnail
-          } else {
-            alert('Upload failed: ' + uploadRes.error);
+      try {
+        if (productImgSrcMode === 'file') {
+          const fileInput = document.getElementById('prod-img-file');
+          if (fileInput.files.length === 0 && !id) {
+            alert('Please select files to upload.');
+            enableBtn();
             return;
           }
+
+          if (fileInput.files.length > 0) {
+            const fd = new FormData();
+            for (let i = 0; i < fileInput.files.length; i++) {
+              fd.append('images', fileInput.files[i]);
+            }
+            const uploadRes = await API.uploadImages(fd);
+            if (uploadRes.success) {
+              image_url = uploadRes.urls[0]; // Primary thumbnail
+            } else {
+              alert('Upload failed: ' + uploadRes.error);
+              enableBtn();
+              return;
+            }
+          } else {
+            // If editing and no new files selected, keep existing url
+            image_url = document.getElementById('prod-img-url').value;
+          }
         } else {
-          // If editing and no new files selected, keep existing url
           image_url = document.getElementById('prod-img-url').value;
         }
-      } else {
-        image_url = document.getElementById('prod-img-url').value;
-      }
 
-      const productPayload = { name, category_id, price, description, is_featured, image_url };
+        const productPayload = { name, category_id, price, description, is_featured, image_url };
 
-      try {
         let res;
         if (id) {
           res = await API.updateProduct(id, productPayload);
@@ -421,10 +438,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           loadProductsData();
         } else {
           alert(res.error || 'Failed to save product');
+          enableBtn();
         }
       } catch (err) {
         console.error(err);
         alert('Failed to save product due to connection issue.');
+        enableBtn();
       }
     });
   }
