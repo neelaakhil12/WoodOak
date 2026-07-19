@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       e.preventDefault();
       const id = document.getElementById('prod-id').value;
       const name = document.getElementById('prod-name').value;
-      const category_id = parseInt(document.getElementById('prod-category').value);
+      const category_id = parseInt(document.getElementById('prod-category').value) || null;
       const price = parseFloat(document.getElementById('prod-price').value);
       const description = document.getElementById('prod-description').value;
       const is_featured = document.getElementById('prod-featured').checked ? 1 : 0;
@@ -464,7 +464,7 @@ async function loadGlobalData() {
     const categoryFilter = document.getElementById('product-filter-category');
     const galleryCatSelect = document.getElementById('gallery-category');
     
-    if (categorySelect && categoryFilter) {
+    if (categorySelect && categorySelect.tagName === 'SELECT' && categoryFilter) {
       categorySelect.innerHTML = '';
       categoryFilter.innerHTML = '<option value="">All Categories</option>';
 
