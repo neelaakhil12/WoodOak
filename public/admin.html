@@ -207,7 +207,7 @@
         <!-- SECTION: DASHBOARD -->
         <section id="section-dashboard" class="admin-section space-y-8">
           <!-- Stats Widgets -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
               <div>
                 <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Services</span>
@@ -217,45 +217,10 @@
             </div>
             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
               <div>
-                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Inquiries</span>
-                <span id="stat-inquiries" class="block font-heading font-extrabold text-3xl mt-1 text-amber-600">0</span>
-              </div>
-              <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="inbox" class="w-6 h-6"></i></div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-              <div>
                 <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Gallery Showcase</span>
                 <span id="stat-gallery" class="block font-heading font-extrabold text-3xl mt-1">0</span>
               </div>
               <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="image" class="w-6 h-6"></i></div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-              <div>
-                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Testimonials</span>
-                <span id="stat-testimonials" class="block font-heading font-extrabold text-3xl mt-1">0</span>
-              </div>
-              <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center"><i data-lucide="message-square-quote" class="w-6 h-6"></i></div>
-            </div>
-          </div>
-
-          <!-- Recent Inquiries widget -->
-          <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
-            <h3 class="font-heading font-bold text-gray-900 text-sm">Recent Customer Enquiries</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr class="border-b border-gray-100 text-gray-400 font-semibold uppercase tracking-wider">
-                    <th class="py-3 pr-4">Date</th>
-                    <th class="py-3 px-4">Name</th>
-                    <th class="py-3 px-4">Email / Phone</th>
-                    <th class="py-3 px-4">Subject</th>
-                    <th class="py-3 px-4">Message</th>
-                  </tr>
-                </thead>
-                <tbody id="recent-inquiries-table">
-                  <!-- dynamically loaded -->
-                </tbody>
-              </table>
             </div>
           </div>
         </section>
