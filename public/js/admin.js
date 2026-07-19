@@ -416,6 +416,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           res = await API.createProduct(productPayload);
         }
         if (res.success || res.id) {
+          alert('Product uploaded successfully!');
           closeProductForm();
           loadProductsData();
         } else {
