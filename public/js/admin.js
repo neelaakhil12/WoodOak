@@ -617,7 +617,6 @@ async function loadProductsData() {
         <tr class="border-b border-gray-100 hover:bg-gray-50 text-gray-600 font-medium">
           <td class="py-3 px-6"><img src="${p.image_url}" alt="" class="w-10 h-10 object-cover rounded-lg border border-brand-border bg-gray-50"></td>
           <td class="py-3 px-4 font-bold text-gray-900">${p.name}</td>
-          <td class="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-brand-primary">${p.category_name || 'Uncategorized'}</td>
           <td class="py-3 px-4 text-center">${featuredBadge}</td>
           <td class="py-3 px-6 text-right space-x-2 whitespace-nowrap">
             <button onclick="editProduct(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="text-brand-primary hover:text-brand-secondary p-1" title="Edit Product"><i data-lucide="edit-2" class="w-4 h-4"></i></button>

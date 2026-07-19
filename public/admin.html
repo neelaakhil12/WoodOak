@@ -278,9 +278,7 @@
             <!-- Search & Filters -->
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <input type="text" id="product-search" class="px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none w-48 bg-white" placeholder="Search services...">
-              <select id="product-filter-category" class="px-4 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none bg-white">
-                <option value="">All Categories</option>
-              </select>
+              <select id="product-filter-category" class="hidden"><option value="">All Categories</option></select>
             </div>
             <button onclick="openProductForm()" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 shrink-0">
               <i data-lucide="plus" class="w-4 h-4"></i>
@@ -295,7 +293,6 @@
                 <tr class="border-b border-gray-100 bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider">
                   <th class="py-3.5 px-6">Image</th>
                   <th class="py-3.5 px-4">Name</th>
-                  <th class="py-3.5 px-4">Category</th>
                   <th class="py-3.5 px-4 text-center">Featured</th>
                   <th class="py-3.5 px-6 text-right">Actions</th>
                 </tr>
