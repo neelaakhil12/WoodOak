@@ -93,7 +93,11 @@ app.use((req, res, next) => {
   for (let c of cookies) {
     const parts = c.trim().split('=');
     if (parts[0] === 'admin_sid') {
-      token = parts[1];
+      try {
+        token = decodeURIComponent(parts[1]);
+      } catch (e) {
+        token = parts[1];
+      }
       break;
     }
   }
