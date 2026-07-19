@@ -333,7 +333,7 @@
   <script src="/js/api.js"></script>
   <script src="/js/main.js"></script>
 
-  <!-- Contact Form Submission JS -->
+  <!-- Contact Form → WhatsApp Redirect JS -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Check query params to prefill subject (e.g. if arriving from service page)
@@ -347,46 +347,47 @@
       const form = document.getElementById('contact-form');
       const alertBox = document.getElementById('form-alert');
 
+      // Business WhatsApp number (country code + number, no + or spaces)
+      const WHATSAPP_NUMBER = '919848677678';
+
       if (form) {
-        form.addEventListener('submit', async (e) => {
+        form.addEventListener('submit', (e) => {
           e.preventDefault();
-          
-          // Disable button
-          const btn = form.querySelector('button[type="submit"]');
-          btn.disabled = true;
-          btn.innerHTML = 'Submitting...';
 
-          const data = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            subject: subjectInput.value,
-            message: document.getElementById('message').value
-          };
+          const name    = document.getElementById('name').value.trim();
+          const email   = document.getElementById('email').value.trim();
+          const phone   = document.getElementById('phone').value.trim();
+          const subject = subjectInput.value.trim();
+          const message = document.getElementById('message').value.trim();
 
-          try {
-            const res = await API.submitEnquiry(data);
-            if (res.success) {
-              alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700');
-              alertBox.classList.add('bg-green-50', 'text-green-700');
-              alertBox.textContent = res.message;
-              form.reset();
-            } else {
-              throw new Error(res.error || 'Failed to submit enquiry');
-            }
-          } catch (err) {
-            console.error(err);
+          if (!name || !message) {
             alertBox.classList.remove('hidden', 'bg-green-50', 'text-green-700');
             alertBox.classList.add('bg-red-50', 'text-red-700');
-            alertBox.textContent = err.message || 'There was an issue sending your message. Please try again.';
-          } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Send Inquiry Message</span>`;
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-            
-            // Scroll to alert
+            alertBox.textContent = 'Please fill in your name and message before sending.';
             alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
           }
+
+          // Build the WhatsApp message
+          const waMessage =
+            `*New Inquiry from Wood Oak Wonders Website*\n\n` +
+            `*Name:* ${name}\n` +
+            (email   ? `*Email:* ${email}\n`   : '') +
+            (phone   ? `*Phone:* ${phone}\n`   : '') +
+            (subject ? `*Subject:* ${subject}\n` : '') +
+            `\n*Message:*\n${message}`;
+
+          const waURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
+
+          // Show a quick success notice then open WhatsApp
+          alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700');
+          alertBox.classList.add('bg-green-50', 'text-green-700');
+          alertBox.textContent = 'Redirecting you to WhatsApp…';
+          alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+          setTimeout(() => {
+            window.open(waURL, '_blank');
+          }, 600);
         });
       }
     });
