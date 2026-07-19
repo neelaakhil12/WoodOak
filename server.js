@@ -47,75 +47,91 @@ if (isVercel) {
   app.use('/uploads', express.static('/tmp/uploads'));
 }
 
-// Persistent Session Store Setup
-const os = require('os');
-const SESSION_FILE = path.join(os.tmpdir(), 'wood_oak_wonders_sessions.json');
-let sessionsMap = new Map();
+// Stateless Cookie-Based Session Setup (Vercel Serverless Compatible)
+const crypto = require('crypto');
+const SESSION_SECRET = process.env.SESSION_SECRET || 'wood_oak_wonders_secret_key_2026';
 
-try {
-  if (fs.existsSync(SESSION_FILE)) {
-    const fileData = fs.readFileSync(SESSION_FILE, 'utf8');
-    if (fileData.trim()) {
-      const data = JSON.parse(fileData);
-      sessionsMap = new Map(Object.entries(data));
-    }
-  }
-} catch (err) {
-  console.error('Error loading sessions:', err);
+// Helper to sign a payload
+function signPayload(payload, secret) {
+  const payloadStr = JSON.stringify(payload);
+  const hmac = crypto.createHmac('sha256', secret);
+  hmac.update(payloadStr);
+  const signature = hmac.digest('hex');
+  return Buffer.from(payloadStr).toString('base64') + '.' + signature;
 }
 
-function saveSessions() {
+// Helper to verify and parse a signed token
+function verifyToken(token, secret) {
   try {
-    const data = Object.fromEntries(sessionsMap);
-    fs.writeFileSync(SESSION_FILE, JSON.stringify(data), 'utf8');
-  } catch (err) {
-    console.error('Error saving sessions:', err);
+    const parts = token.split('.');
+    if (parts.length !== 2) return null;
+    
+    const payloadStr = Buffer.from(parts[0], 'base64').toString('utf8');
+    const signature = parts[1];
+    
+    const hmac = crypto.createHmac('sha256', secret);
+    hmac.update(payloadStr);
+    const expectedSignature = hmac.digest('hex');
+    
+    if (signature === expectedSignature) {
+      const payload = JSON.parse(payloadStr);
+      if (payload.expires && payload.expires > Date.now()) {
+        return payload;
+      }
+    }
+  } catch (e) {
+    // Ignore error
   }
+  return null;
 }
 
 // Custom Session Middleware
 app.use((req, res, next) => {
   const cookieHeader = req.headers.cookie || '';
-  let sessionId = '';
+  let token = '';
   const cookies = cookieHeader.split(';');
   for (let c of cookies) {
     const parts = c.trim().split('=');
     if (parts[0] === 'admin_sid') {
-      sessionId = parts[1];
+      token = parts[1];
       break;
     }
   }
 
-  if (!sessionId) {
-    sessionId = require('crypto').randomBytes(16).toString('hex');
-    res.cookie('admin_sid', sessionId, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
-  }
-
-  let sessionObj = sessionsMap.get(sessionId);
-  if (!sessionObj) {
-    sessionObj = {};
-    sessionsMap.set(sessionId, sessionObj);
+  let sessionObj = {};
+  if (token) {
+    const verified = verifyToken(token, SESSION_SECRET);
+    if (verified) {
+      sessionObj = verified;
+    }
   }
 
   req.session = sessionObj;
 
   req.session.destroy = (callback) => {
-    sessionsMap.delete(sessionId);
-    saveSessions();
     res.clearCookie('admin_sid');
+    req.session = {};
     if (callback) callback();
   };
 
   // Intercept response sends to auto-save session state
   const originalJson = res.json;
   res.json = function(data) {
-    saveSessions();
+    if (req.session && req.session.isAdmin) {
+      req.session.expires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+      const newToken = signPayload(req.session, SESSION_SECRET);
+      res.cookie('admin_sid', newToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+    }
     return originalJson.apply(this, arguments);
   };
 
   const originalSend = res.send;
   res.send = function(data) {
-    saveSessions();
+    if (req.session && req.session.isAdmin) {
+      req.session.expires = Date.now() + 24 * 60 * 60 * 1000;
+      const newToken = signPayload(req.session, SESSION_SECRET);
+      res.cookie('admin_sid', newToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+    }
     return originalSend.apply(this, arguments);
   };
 
