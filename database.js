@@ -8,19 +8,35 @@ const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 class SupabaseDatabaseClient {
   constructor() {
     this.type = 'supabase';
-    this.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('CRITICAL WARNING: SUPABASE_URL or SUPABASE_ANON_KEY environment variables are missing! Database will not function.');
+      this.supabase = null;
+    } else {
+      this.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    }
   }
 
   async connect() {
+    if (!this.supabase) {
+      console.warn('Connected to unconfigured database client (missing credentials).');
+      return;
+    }
     console.log('Connected to Supabase Database Client.');
   }
 
   async initialize() {
+    if (!this.supabase) {
+      console.warn('Skipping database seeding/initialization (missing credentials).');
+      return;
+    }
     console.log('Initializing Supabase Database (checking seed)...');
     await this.seed();
   }
 
   async query(sql, params = []) {
+    if (!this.supabase) {
+      throw new Error("Supabase client is not configured. Please set SUPABASE_URL and SUPABASE_ANON_KEY environment variables in your Vercel project settings.");
+    }
     const cleanSql = sql.replace(/\s+/g, ' ').trim();
     
     // 1. SELECT * FROM users
@@ -155,6 +171,9 @@ class SupabaseDatabaseClient {
   }
 
   async run(sql, params = []) {
+    if (!this.supabase) {
+      throw new Error("Supabase client is not configured. Please set SUPABASE_URL and SUPABASE_ANON_KEY environment variables in your Vercel project settings.");
+    }
     const cleanSql = sql.replace(/\s+/g, ' ').trim();
 
     // 1. INSERT INTO users
@@ -168,7 +187,23 @@ class SupabaseDatabaseClient {
       return { insertId: data?.[0]?.id || 1, changes: 1 };
     }
     if (cleanSql.includes('UPDATE users SET')) {
-      // Expect params: [password_hash, email]
+      if (cleanSql.includes('reset_token = ?') && cleanSql.includes('reset_expires = ?')) {
+        const { error } = await this.supabase
+          .from('users')
+          .update({ reset_token: params[0], reset_expires: params[1] })
+          .eq('email', params[2]);
+        if (error) throw error;
+        return { changes: 1 };
+      }
+      if (cleanSql.includes('password_hash = ?') && cleanSql.includes('reset_token = NULL')) {
+        const { error } = await this.supabase
+          .from('users')
+          .update({ password_hash: params[0], reset_token: null, reset_expires: null })
+          .eq('email', params[1]);
+        if (error) throw error;
+        return { changes: 1 };
+      }
+      // Fallback simple password update
       const { error } = await this.supabase.from('users').update({ password_hash: params[0] }).eq('email', params[1]);
       if (error) throw error;
       return { changes: 1 };

@@ -182,9 +182,6 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Temporary in-memory token store (email -> { token, expires })
-const resetsStore = new Map();
-
 app.post('/api/auth/forgot-password', async (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -199,10 +196,9 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 
     const crypto = require('crypto');
     const token = crypto.randomBytes(32).toString('hex');
-    resetsStore.set(email.toLowerCase(), {
-      token,
-      expires: Date.now() + 15 * 60 * 1000 // 15 minutes
-    });
+    const expires = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+    await db.run('UPDATE users SET reset_token = ?, reset_expires = ? WHERE email = ?', [token, expires, email.toLowerCase()]);
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -214,7 +210,9 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       }
     });
 
-    const resetLink = `http://localhost:3000/adminlogin?action=reset&email=${encodeURIComponent(email)}&token=${token}`;
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.headers.host;
+    const resetLink = `${protocol}://${host}/adminlogin?action=reset&email=${encodeURIComponent(email)}&token=${token}`;
 
     const mailOptions = {
       from: process.env.SMTP_FROM || `"Wood Oak Wonders" <${process.env.SMTP_USER}>`,
@@ -252,25 +250,24 @@ app.post('/api/auth/reset-password', async (req, res) => {
     return res.status(400).json({ error: 'All fields (email, token, new password) are required' });
   }
 
-  const record = resetsStore.get(email.toLowerCase());
-  if (!record) {
-    return res.status(400).json({ error: 'No active reset request found for this email' });
-  }
-
-  if (record.token !== token) {
-    return res.status(400).json({ error: 'Invalid reset token' });
-  }
-
-  if (record.expires < Date.now()) {
-    resetsStore.delete(email.toLowerCase());
-    return res.status(400).json({ error: 'Reset token has expired' });
-  }
-
   try {
+    const rows = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (rows.length === 0) {
+      return res.status(400).json({ error: 'No active reset request found for this email' });
+    }
+
+    const user = rows[0];
+    if (!user.reset_token || user.reset_token !== token) {
+      return res.status(400).json({ error: 'Invalid reset token' });
+    }
+
+    if (!user.reset_expires || user.reset_expires < Date.now()) {
+      return res.status(400).json({ error: 'Reset token has expired' });
+    }
+
     const hashed = await bcrypt.hash(newPassword, 10);
-    await db.run('UPDATE users SET password_hash = ? WHERE email = ?', [hashed, email.toLowerCase()]);
+    await db.run('UPDATE users SET password_hash = ?, reset_token = NULL, reset_expires = NULL WHERE email = ?', [hashed, email.toLowerCase()]);
     
-    resetsStore.delete(email.toLowerCase());
     res.json({ success: true, message: 'Password has been reset successfully. You can now log in.' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to reset password: ' + err.message });
